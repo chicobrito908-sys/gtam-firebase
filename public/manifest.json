@@ -1,0 +1,21 @@
+{
+  "name": "Escalante Pro GTAM",
+  "short_name": "Escalante",
+  "description": "Sistema de Gestão Tática GTAM/GMF",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0E17",
+  "theme_color": "#0A0E17",
+  "icons": [
+    {
+      "src": "/logo-gtam.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-gtam.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
