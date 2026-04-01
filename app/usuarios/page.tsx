@@ -65,8 +65,8 @@ export default function UserManagementPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/20 shadow-lg shadow-indigo-500/5">
-            <UserPlus className="text-indigo-500" size={24} />
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/5">
+            <UserPlus className="text-primary" size={24} />
           </div>
           <div>
             <h1 className="text-3xl font-black uppercase tracking-tighter text-foreground">Gestão de Acessos</h1>
@@ -84,11 +84,11 @@ export default function UserManagementPage() {
 
       {/* Search Bar */}
       <div className="relative max-w-md group px-2">
-        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-indigo-500 transition-colors" size={16} />
+        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={16} />
         <input 
           type="text"
           placeholder="Filtrar por nome ou e-mail..."
-          className="w-full bg-card border border-white/5 rounded-xl pl-12 pr-4 py-3 text-xs focus:ring-2 focus:ring-indigo-500/30 transition-all outline-none"
+          className="w-full bg-card border border-white/5 rounded-xl pl-12 pr-4 py-3 text-xs focus:ring-2 focus:ring-primary/30 transition-all outline-none"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -99,7 +99,7 @@ export default function UserManagementPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <tr className="bg-[#090b10] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 <th className="px-6 py-4">Usuário / Google Auth</th>
                 <th className="px-6 py-4">Status de Acesso</th>
                 <th className="px-6 py-4">Nível</th>
@@ -119,7 +119,7 @@ export default function UserManagementPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10 text-indigo-500 text-xs font-black">
+                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/10 text-primary text-xs font-black">
                           {user.nome ? user.nome.charAt(0) : <Users size={16} />}
                         </div>
                         <div className="flex flex-col">
@@ -204,8 +204,8 @@ export default function UserManagementPage() {
           </div>
         </div>
         <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex items-center gap-4">
-          <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center border border-indigo-500/10">
-            <ShieldCheck className="text-indigo-500" size={20} />
+          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/10">
+            <ShieldCheck className="text-primary" size={20} />
           </div>
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest">Nível de Serviço</h4>

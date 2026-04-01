@@ -16,9 +16,30 @@ import {
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface Afastamento {
+  id: string;
+  efetivo_id: string;
+  tipo: string;
+  data_inicio: string;
+  data_fim: string;
+  motivo?: string;
+  efetivo?: {
+    nome_guerra: string;
+    matricula: string;
+    posto_grad: string;
+  };
+}
+
+interface EfetivoBasico {
+  id: string;
+  nome_guerra: string;
+  matricula: string;
+  posto_grad: string;
+}
+
 export default function AfastamentosPage() {
-  const [afastamentos, setAfastamentos] = useState<any[]>([]);
-  const [efetivo, setEfetivo] = useState<any[]>([]);
+  const [afastamentos, setAfastamentos] = useState<Afastamento[]>([]);
+  const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   
@@ -83,8 +104,9 @@ export default function AfastamentosPage() {
         motivo: "",
       });
       fetchData();
-    } catch (error: any) {
-      alert("Erro ao salvar: " + error.message);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert("Erro ao salvar: " + errorMsg);
     }
   };
 
@@ -94,8 +116,9 @@ export default function AfastamentosPage() {
       const { error } = await supabase.from("afastamentos").delete().eq("id", id);
       if (error) throw error;
       fetchData();
-    } catch (error: any) {
-      alert("Erro ao excluir: " + error.message);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert("Erro ao excluir: " + errorMsg);
     }
   };
 
@@ -137,8 +160,8 @@ export default function AfastamentosPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground border-b border-white/5">
-                <th className="px-6 py-4 font-black">Integrante</th>
+              <tr className="bg-[#090b10] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <th className="px-6 py-4">Integrante</th>
                 <th className="px-6 py-4 font-black">Tipo</th>
                 <th className="px-6 py-4 font-black">Período</th>
                 <th className="px-6 py-4 font-black">Motivo / Observação</th>
@@ -156,11 +179,11 @@ export default function AfastamentosPage() {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/10 text-blue-500 font-bold text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 text-primary font-bold text-xs uppercase">
                         {af.efetivo?.nome_guerra?.substring(0, 2).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-foreground">{af.efetivo?.nome_guerra}</span>
+                        <span className="text-xs font-black text-foreground uppercase tracking-tighter">{af.efetivo?.nome_guerra}</span>
                         <span className="text-[9px] text-muted-foreground uppercase font-medium tracking-tight">
                           {af.efetivo?.posto_grad} • {af.efetivo?.matricula}
                         </span>
@@ -234,7 +257,7 @@ export default function AfastamentosPage() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-white/5 rounded-3xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-lg bg-[#0d1117] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                 <h2 className="font-black uppercase tracking-widest text-sm flex items-center gap-2">

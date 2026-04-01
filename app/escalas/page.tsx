@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   CalendarDays,
   ChevronLeft,
@@ -109,7 +109,7 @@ function turnoIcon(turno?: string) {
   const normalized = normalizeTurno(turno);
   if (normalized === "24x72") return <Shield size={16} className="text-violet-400" />;
   if (normalized === "Manha") return <Sun size={16} className="text-amber-400" />;
-  return <Clock3 size={16} className="text-blue-400" />;
+  return <Clock3 size={16} className="text-primary" />;
 }
 
 function turnoBadgeClasses(turno?: string) {
@@ -155,7 +155,7 @@ export default function EscalasPage() {
 
   const monthRange = getMonthRange(currentDate);
 
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [{ data: efetivoData }, { data: escalasData }] = await Promise.all([
@@ -176,11 +176,11 @@ export default function EscalasPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [monthRange.firstDay, monthRange.lastDay]);
 
   useEffect(() => {
     fetchData();
-  }, [currentDate]);
+  }, [fetchData]);
 
   useEffect(() => {
     const monthPrefix = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}`;
@@ -288,8 +288,9 @@ export default function EscalasPage() {
       closeModal();
       await fetchData();
       setSelectedDay(payload.data);
-    } catch (error: any) {
-      alert(`Erro ao salvar escala: ${error?.message || "desconhecido"}`);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert(`Erro ao salvar escala: ${errorMsg}`);
     } finally {
       setSaving(false);
     }
@@ -310,8 +311,9 @@ export default function EscalasPage() {
 
       closeModal();
       await fetchData();
-    } catch (error: any) {
-      alert(`Erro ao remover escala: ${error?.message || "desconhecido"}`);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert(`Erro ao remover escala: ${errorMsg}`);
     } finally {
       setSaving(false);
     }
@@ -348,21 +350,21 @@ export default function EscalasPage() {
     <div className="space-y-6 px-4 py-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-500/20 bg-blue-500/10">
-            <CalendarDays className="text-blue-400" size={24} />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 shadow-lg shadow-primary/5">
+            <CalendarDays className="text-primary" size={24} />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white">Escalas</h1>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Operacao diaria e planejamento mensal</p>
+            <h1 className="text-3xl font-black tracking-tight text-white uppercase">Escalas</h1>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-60">Operação diária e planejamento mensal • GTAM</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center rounded-xl border border-white/5 bg-[#182238] p-1">
+          <div className="flex items-center rounded-xl border border-white/5 bg-[#0d1117] p-1 shadow-sm">
             <button onClick={() => changeMonth(-1)} className="rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-white">
               <ChevronLeft size={18} />
             </button>
-            <span className="min-w-[180px] px-4 text-center text-xs font-black uppercase tracking-[0.2em] text-white">
+            <span className="min-w-[180px] px-4 text-center text-xs font-black uppercase tracking-[0.22em] text-white">
               {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
             <button onClick={() => changeMonth(1)} className="rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-white">
@@ -372,14 +374,14 @@ export default function EscalasPage() {
 
           <button
             onClick={() => changeMonth(0)}
-            className="rounded-xl border border-white/5 bg-[#182238] px-4 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-slate-300 transition hover:bg-[#1d2941] hover:text-white"
+            className="rounded-xl border border-white/5 bg-[#0d1117] px-4 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-slate-300 transition hover:bg-white/5 hover:text-white shadow-sm"
           >
             Hoje
           </button>
 
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-blue-500"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-white transition hover:bg-primary/90 shadow-lg shadow-primary/20"
           >
             <Plus size={16} />
             Adicionar Escala
@@ -388,7 +390,7 @@ export default function EscalasPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <section className="rounded-[22px] border border-white/5 bg-[#182238] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+        <section className="rounded-[22px] border border-white/5 bg-[#0d1117] shadow-xl overflow-hidden">
           <div className="border-b border-white/5 px-5 py-5">
             <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
               {WEEK_DAYS.map((day) => (
@@ -413,11 +415,11 @@ export default function EscalasPage() {
                   key={cell.key}
                   type="button"
                   onClick={() => setSelectedDay(cell.date!)}
-                  className={`min-h-[92px] rounded-2xl border p-3 text-left transition ${
+                  className={`min-h-[92px] rounded-2xl border p-3 text-left transition shadow-sm ${
                     isSelected
-                      ? "border-blue-500/40 bg-blue-500/10"
-                      : "border-white/5 bg-[#11192b] hover:border-white/10 hover:bg-[#14203a]"
-                  } ${isToday ? "ring-1 ring-inset ring-blue-400/30" : ""}`}
+                      ? "border-primary/40 bg-primary/10"
+                      : "border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/[0.03]"
+                  } ${isToday ? "ring-1 ring-inset ring-primary/30" : ""}`}
                 >
                   <div className="mb-3 flex items-start justify-between">
                     <span className={`text-sm font-black ${isSelected ? "text-white" : "text-slate-200"}`}>{cell.day}</span>
@@ -430,15 +432,15 @@ export default function EscalasPage() {
                   <div className="space-y-1">
                     {cell.hasServico ? (
                       <>
-                        <div className="h-2 rounded-full bg-slate-700">
-                          <div className="h-2 rounded-full bg-blue-500" style={{ width: `${Math.min((cell.count || 0) * 20, 100)}%` }} />
+                        <div className="h-1.5 rounded-full bg-white/5">
+                          <div className="h-1.5 rounded-full bg-primary shadow-sm" style={{ width: `${Math.min((cell.count || 0) * 20, 100)}%` }} />
                         </div>
-                        <p className="text-[10px] font-semibold text-slate-400">
-                          {cell.count === 1 ? "1 lancamento" : `${cell.count} lancamentos`}
+                        <p className="text-[10px] font-black uppercase tracking-tight text-muted-foreground opacity-60">
+                          {cell.count === 1 ? "1 AGENTE" : `${cell.count} AGENTES`}
                         </p>
                       </>
                     ) : (
-                      <p className="pt-4 text-[10px] font-semibold text-slate-500">Sem escala</p>
+                      <p className="pt-4 text-[10px] font-bold text-muted-foreground uppercase opacity-30">Vazio</p>
                     )}
                   </div>
                 </button>
@@ -447,11 +449,11 @@ export default function EscalasPage() {
           </div>
         </section>
 
-        <aside className="rounded-[22px] border border-white/5 bg-[#182238] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
-          <div className="border-b border-white/5 px-5 py-5">
+        <aside className="rounded-[22px] border border-white/5 bg-[#0d1117] shadow-xl overflow-hidden">
+          <div className="border-b border-white/5 px-5 py-5 bg-white/[0.02]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-400">Dia Selecionado</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-primary">Dia Selecionado</p>
                 <h2 className="mt-2 text-xl font-black text-white">{formatDate(selectedDay)}</h2>
               </div>
               <div className="flex items-center gap-2">
@@ -464,7 +466,7 @@ export default function EscalasPage() {
                 </button>
                 <button
                   onClick={openCreateModal}
-                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-500"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-primary/90 shadow-lg shadow-primary/20"
                 >
                   <Plus size={16} />
                   Adicionar
@@ -476,45 +478,53 @@ export default function EscalasPage() {
           <div className="p-5">
             {loading ? (
               <div className="flex min-h-[280px] items-center justify-center">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500/20 border-t-blue-500" />
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
               </div>
-            ) : dayItems.length ? (
+            ) : dayItems.length > 0 ? (
               <div className="space-y-3">
                 {dayItems.map((item, index) => (
                   <motion.button
                     key={`${item.efetivo_id}-${item.data}-${index}`}
                     type="button"
-                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
                     onClick={() => openEditModal(item)}
-                    className="w-full rounded-2xl border border-white/5 bg-[#11192b] p-4 text-left transition hover:border-white/10 hover:bg-[#14203a]"
+                    className="w-full rounded-2xl border border-white/5 bg-white/[0.02] p-4 text-left transition hover:border-primary/30 hover:bg-white/[0.04] group shadow-sm"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          {turnoIcon(item.turno)}
-                          <span className={`rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] ${turnoBadgeClasses(item.turno)}`}>
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            {turnoIcon(item.turno)}
+                          </div>
+                          <span className={`rounded-lg border px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] ${turnoBadgeClasses(item.turno)}`}>
                             {turnoDisplay(item.turno)}
                           </span>
                         </div>
                         <p className="text-sm font-black text-white">{getAgentName(item)}</p>
-                        <div className="flex flex-wrap gap-2 text-[11px] text-slate-400">
-                          <span>{item.equipe || "Sem equipe"}</span>
+                        <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          <span>{item.equipe || "ALFA"}</span>
                           <span>•</span>
-                          <span>{item.funcao || "Servidor"}</span>
+                          <span>{item.funcao || "Operacional"}</span>
                         </div>
                       </div>
-                      <span className="rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
+                      <div className="rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary group-hover:border-primary/20 transition-colors shadow-sm">
                         Editar
-                      </span>
+                      </div>
                     </div>
                   </motion.button>
                 ))}
               </div>
             ) : (
-              <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-[#11192b] px-6 text-center">
-                <CalendarDays size={28} className="mb-4 text-slate-500" />
-                <p className="text-sm font-black text-white">Nenhuma escala neste dia</p>
-                <p className="mt-2 text-xs text-slate-400">Selecione um dia no calendario e adicione os lancamentos operacionais.</p>
+              <div className="flex min-h-[320px] flex-col items-center justify-center rounded-[22px] border border-dashed border-white/10 bg-white/[0.01] px-6 text-center">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.02] text-slate-600">
+                  <CalendarDays size={32} />
+                </div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-white">Sem Escalas Registradas</p>
+                <p className="mt-2 text-[10px] font-bold uppercase leading-relaxed tracking-wider text-slate-500 opacity-60">
+                  Selecione um dia no calendário e adicione<br />os lançamentos operacionais.
+                </p>
               </div>
             )}
           </div>
@@ -522,50 +532,51 @@ export default function EscalasPage() {
       </div>
 
       <AnimatePresence>
-        {showModal ? (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={closeModal}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/5 bg-[#182238] shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0d1117] shadow-2xl my-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-white/5 px-6 py-5">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-400">
-                    {selectedEscala ? "Editar escala" : "Nova escala"}
-                  </p>
-                  <h3 className="mt-2 text-xl font-black text-white">{formatShortDate(formData.data)}</h3>
+              <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] p-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <CalendarDays size={20} />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-black text-white uppercase tracking-tight">
+                      {selectedEscala ? "Editar Escala" : "Nova Escala"}
+                    </h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-60">
+                      {formatDate(formData.data)}
+                    </p>
+                  </div>
                 </div>
-                <button onClick={closeModal} className="rounded-full p-2 text-slate-400 transition hover:bg-white/5 hover:text-white">
+                <button onClick={closeModal} className="rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white">
                   <X size={20} />
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="grid gap-6 p-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <form onSubmit={handleSave} className="grid gap-6 p-6 lg:grid-cols-2">
                 <div className="space-y-4">
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Buscar agente</span>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Buscar Agente</label>
                     <div className="relative">
                       <UserRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                       <input
+                        type="text"
                         value={agentSearch}
-                        onChange={(event) => setAgentSearch(event.target.value)}
-                        placeholder="Nome de guerra ou matricula"
-                        className="w-full rounded-xl border border-white/5 bg-[#11192b] py-3 pl-11 pr-4 text-sm text-white outline-none transition focus:border-blue-500/30"
+                        onChange={(e) => setAgentSearch(e.target.value)}
+                        placeholder="Nome ou matrícula"
+                        className="w-full rounded-xl border border-white/5 bg-white/[0.02] py-3 pl-11 pr-4 text-sm text-white focus:border-primary/50 focus:outline-none transition placeholder:text-slate-600"
                       />
                     </div>
-                  </label>
+                  </div>
 
-                  <div className="max-h-[280px] space-y-2 overflow-y-auto rounded-2xl border border-white/5 bg-[#11192b] p-3">
+                  <div className="max-h-[240px] space-y-2 overflow-y-auto rounded-2xl border border-white/5 bg-white/[0.01] p-3 scrollbar-thin scrollbar-thumb-white/10">
                     {filteredAgents.map((agent) => {
                       const active = formData.efetivo_id === agent.id;
                       return (
@@ -574,105 +585,109 @@ export default function EscalasPage() {
                           type="button"
                           onClick={() => {
                             setFormData((prev) => ({ ...prev, efetivo_id: agent.id }));
-                            setAgentSearch(agent.nome_guerra || agent.nome_completo || "");
+                            setAgentSearch(getAgentLabel(agent));
                           }}
                           className={`w-full rounded-xl border px-4 py-3 text-left transition ${
                             active
-                              ? "border-blue-500/30 bg-blue-500/10"
-                              : "border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]"
+                              ? "border-primary/40 bg-primary/10"
+                              : "border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/[0.03]"
                           }`}
                         >
-                          <p className="text-sm font-bold text-white">{getAgentLabel(agent) || agent.matricula || "Servidor"}</p>
-                          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                            {agent.matricula || "Sem matricula"}
+                          <p className="text-sm font-black text-white">{getAgentLabel(agent)}</p>
+                          <p className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-slate-500">
+                            Matrícula: {agent.matricula || "---"}
                           </p>
                         </button>
                       );
                     })}
-
-                    {!filteredAgents.length ? (
-                      <div className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-xs text-slate-500">
-                        Nenhum agente encontrado.
+                    {filteredAgents.length === 0 && (
+                      <div className="py-8 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Nenhum agente encontrado</p>
                       </div>
-                    ) : null}
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Data</span>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Data</label>
                     <input
                       type="date"
                       value={formData.data}
-                      onChange={(event) => setFormData((prev) => ({ ...prev, data: event.target.value }))}
-                      className="w-full rounded-xl border border-white/5 bg-[#11192b] px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/30"
+                      onChange={(e) => setFormData((prev) => ({ ...prev, data: e.target.value }))}
+                      className="w-full rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm text-white focus:border-primary/50 focus:outline-none [color-scheme:dark]"
                     />
-                  </label>
+                  </div>
 
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Turno</span>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Turno</label>
                     <select
                       value={formData.turno}
-                      onChange={(event) => setFormData((prev) => ({ ...prev, turno: event.target.value }))}
-                      className="w-full rounded-xl border border-white/5 bg-[#11192b] px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/30"
+                      onChange={(e) => setFormData((prev) => ({ ...prev, turno: e.target.value }))}
+                      className="w-full rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm text-white focus:border-primary/50 focus:outline-none"
                     >
-                      <option value="24x72">Servico 24x72</option>
-                      <option value="Manha">Turno Manha</option>
-                      <option value="Tarde">Turno Tarde</option>
+                      <option value="24x72" className="bg-[#0d1117]">Serviço 24x72</option>
+                      <option value="Manha" className="bg-[#0d1117]">Manhã</option>
+                      <option value="Tarde" className="bg-[#0d1117]">Tarde</option>
                     </select>
-                  </label>
+                  </div>
 
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Equipe</span>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Equipe</label>
                     <input
+                      type="text"
                       value={formData.equipe}
-                      onChange={(event) => setFormData((prev) => ({ ...prev, equipe: event.target.value.toUpperCase() }))}
-                      className="w-full rounded-xl border border-white/5 bg-[#11192b] px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/30"
+                      onChange={(e) => setFormData((prev) => ({ ...prev, equipe: e.target.value.toUpperCase() }))}
+                      className="w-full rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm text-white focus:border-primary/50 focus:outline-none"
                     />
-                  </label>
+                  </div>
 
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Funcao</span>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Função</label>
                     <input
+                      type="text"
                       value={formData.funcao}
-                      onChange={(event) => setFormData((prev) => ({ ...prev, funcao: event.target.value }))}
-                      className="w-full rounded-xl border border-white/5 bg-[#11192b] px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/30"
+                      onChange={(e) => setFormData((prev) => ({ ...prev, funcao: e.target.value }))}
+                      className="w-full rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm text-white focus:border-primary/50 focus:outline-none"
                     />
-                  </label>
+                  </div>
+                </div>
 
-                  <div className="flex gap-3 pt-4">
-                    {selectedEscala ? (
-                      <button
-                        type="button"
-                        disabled={saving}
-                        onClick={handleDelete}
-                        className="inline-flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-rose-300 transition hover:bg-rose-500/20"
-                      >
-                        <Trash2 size={16} />
-                        Excluir
-                      </button>
-                    ) : null}
+                <div className="lg:col-span-2 flex items-center justify-end gap-3 mt-4 border-t border-white/5 pt-6">
+                  {selectedEscala && (
                     <button
                       type="button"
-                      onClick={closeModal}
-                      className="flex-1 rounded-xl border border-white/5 bg-[#11192b] px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 transition hover:bg-[#14203a] hover:text-white"
+                      onClick={handleDelete}
+                      className="mr-auto inline-flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-rose-300 transition hover:bg-rose-500/20"
                     >
-                      Cancelar
+                      <Trash2 size={16} />
+                      Excluir
                     </button>
-                    <button
-                      type="submit"
-                      disabled={saving || !formData.efetivo_id}
-                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      <Save size={16} />
-                      {saving ? "Salvando..." : "Salvar"}
-                    </button>
-                  </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="rounded-xl px-6 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400 transition hover:bg-white/5 hover:text-white"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving || !formData.efetivo_id}
+                    className="rounded-xl bg-primary px-8 py-3 text-[10px] font-black uppercase tracking-[0.22em] text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90 disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                        Salvando
+                      </div>
+                    ) : "Salvar Escala"}
+                  </button>
                 </div>
               </form>
             </motion.div>
           </div>
-        ) : null}
+        )}
       </AnimatePresence>
     </div>
   );

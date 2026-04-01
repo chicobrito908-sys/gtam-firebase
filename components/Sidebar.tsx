@@ -96,7 +96,7 @@ export default function Sidebar() {
       </AnimatePresence>
 
       <aside className={`
-        fixed left-0 top-0 h-screen w-64 bg-[#0A0E17] border-r border-white/5 flex flex-col z-50
+        fixed left-0 top-0 h-screen w-64 bg-[#0d1117] border-r border-white/5 flex flex-col z-50
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>
@@ -112,7 +112,7 @@ export default function Sidebar() {
             </div>
             <div>
               <h2 className="text-base font-black tracking-tight text-white uppercase">Escalante Pro</h2>
-              <p className="text-xs text-blue-500 font-extrabold tracking-widest uppercase opacity-70">GTAM GMF</p>
+              <p className="text-xs text-primary font-extrabold tracking-widest uppercase opacity-70">GTAM GMF</p>
             </div>
           </div>
           <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-muted-foreground">
@@ -134,12 +134,12 @@ export default function Sidebar() {
                       className={`
                         flex items-center gap-4 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all
                         ${isActive
-                          ? "bg-blue-600/10 text-blue-400 border border-blue-500/20"
+                          ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(124,58,237,0.1)]"
                           : "text-muted-foreground hover:bg-white/[0.03] hover:text-white"
                         }
                       `}
                     >
-                      <item.icon size={18} className={isActive ? "text-blue-400" : "text-muted-foreground/60"} />
+                      <item.icon size={18} className={isActive ? "text-primary" : "text-muted-foreground/60"} />
                       <span className="truncate">{item.name}</span>
                     </Link>
                   );
@@ -155,7 +155,7 @@ export default function Sidebar() {
               {time.getHours().toString().padStart(2, "0")}:{time.getMinutes().toString().padStart(2, "0")}
             </p>
             <div className="flex flex-col">
-              <span className="text-xs uppercase font-black text-blue-500/60 tracking-[0.2em]">
+              <span className="text-xs uppercase font-black text-primary/60 tracking-[0.2em]">
                 {time.toLocaleDateString("pt-BR", { weekday: "long" }).toUpperCase()}
               </span>
               <span className="text-[11px] uppercase font-bold text-muted-foreground/40 tracking-widest mt-0.5">

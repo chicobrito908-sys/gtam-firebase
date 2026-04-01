@@ -33,6 +33,13 @@ export default function FaltasPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   
+  const statItems = [
+    { label: "Mês Atual", value: faltas.filter(f => f.data.startsWith(new Date().toISOString().slice(0, 7))).length, color: "text-white" },
+    { label: "Injustificadas", value: faltas.filter(f => f.tipo === 'INJUSTIFICADA').length, color: "text-rose-500" },
+    { label: "Justificadas", value: faltas.filter(f => f.tipo === 'JUSTIFICADA').length, color: "text-amber-500" },
+    { label: "Total Geral", value: faltas.length, color: "text-muted-foreground" },
+  ];
+  
   // Form State
   const [efetivo, setEfetivo] = useState<any[]>([]);
   const [formData, setFormData] = useState({
@@ -90,10 +97,15 @@ export default function FaltasPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3">
-            <XSquare className="text-rose-500" /> Registro de Faltas
-          </h1>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Controle de Assiduidade e Ocorrências • GTAM</p>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center border border-rose-500/20 shadow-lg shadow-rose-500/5">
+            <XSquare className="text-rose-500" size={24} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tighter text-white">Registro de Faltas</h1>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-60">Controle de Assiduidade e Ocorrências • GTAM</p>
+          </div>
+        </div>
         </div>
         <button 
           onClick={() => setShowModal(true)}
@@ -105,13 +117,8 @@ export default function FaltasPage() {
 
       {/* Stats Quick View */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: "Mês Atual", value: faltas.filter(f => f.data.startsWith(new Date().toISOString().slice(0, 7))).length, color: "text-foreground" },
-          { label: "Injustificadas", value: faltas.filter(f => f.tipo === 'INJUSTIFICADA').length, color: "text-rose-500" },
-          { label: "Justificadas", value: faltas.filter(f => f.tipo === 'JUSTIFICADA').length, color: "text-amber-500" },
-          { label: "Total Geral", value: faltas.length, color: "text-muted-foreground" },
-        ].map((stat, i) => (
-          <div key={i} className="bg-card/40 border border-white/5 p-4 rounded-2xl">
+        {statItems.map((stat, i) => (
+          <div key={i} className="bg-[#0d1117] border border-white/5 p-4 rounded-2xl shadow-sm">
             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">{stat.label}</p>
             <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
           </div>
@@ -138,8 +145,8 @@ export default function FaltasPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-[10px] uppercase tracking-widest text-muted-foreground/60 border-b border-white/5 bg-white/5">
-                  <th className="px-6 py-4 font-black">Data</th>
+                <tr className="bg-[#090b10] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <th className="px-6 py-4">Data</th>
                   <th className="px-6 py-4 font-black">Agente</th>
                   <th className="px-6 py-4 font-black">Tipo</th>
                   <th className="px-6 py-4 font-black">Justificativa</th>
@@ -159,7 +166,7 @@ export default function FaltasPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-foreground group-hover:text-rose-400 transition-colors">{f.efetivo?.nome_guerra}</span>
+                        <span className="text-xs font-black text-foreground group-hover:text-rose-400 transition-colors uppercase tracking-tighter">{f.efetivo?.nome_guerra}</span>
                         <span className="text-[9px] text-muted-foreground uppercase">{f.efetivo?.matricula}</span>
                       </div>
                     </td>

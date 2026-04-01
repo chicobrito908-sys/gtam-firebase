@@ -34,7 +34,13 @@ export default function BancoHorasPage() {
   const [showModal, setShowModal] = useState(false);
   
   // Form State
-  const [efetivo, setEfetivo] = useState<any[]>([]);
+  interface EfetivoBasico {
+    id: string;
+    nome_guerra: string;
+    matricula: string;
+  }
+
+  const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
   const [formData, setFormData] = useState({
     efetivo_id: "",
     data: new Date().toISOString().split('T')[0],
@@ -103,14 +109,19 @@ export default function BancoHorasPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3">
-            <Clock className="text-blue-500" /> Banco de Horas
-          </h1>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Gestão de Créditos e Compensações • GTAM</p>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 shadow-lg shadow-primary-500/5">
+            <Clock className="text-primary" size={24} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tighter text-white">Banco de Horas</h1>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-60">Gestão de Créditos e Compensações • GTAM</p>
+          </div>
+        </div>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20"
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-lg shadow-primary/20"
         >
           <Plus size={16} /> Lançar Horas
         </button>
@@ -118,7 +129,7 @@ export default function BancoHorasPage() {
 
       {/* Grid: Balanço e Resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card/40 border border-white/5 p-6 rounded-2xl flex flex-col justify-center">
+        <div className="bg-[#0d1117] border border-white/5 p-6 rounded-2xl flex flex-col justify-center shadow-sm">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Total de Créditos (H)</p>
           <div className="flex items-baseline gap-2">
             <p className="text-3xl font-black text-emerald-500">
@@ -127,7 +138,7 @@ export default function BancoHorasPage() {
             <TrendingUp size={16} className="text-emerald-500/50" />
           </div>
         </div>
-        <div className="bg-card/40 border border-white/5 p-6 rounded-2xl flex flex-col justify-center">
+        <div className="bg-[#0d1117] border border-white/5 p-6 rounded-2xl flex flex-col justify-center shadow-sm">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Total de Débitos (H)</p>
           <div className="flex items-baseline gap-2">
             <p className="text-3xl font-black text-rose-500">
@@ -136,8 +147,8 @@ export default function BancoHorasPage() {
             <TrendingDown size={16} className="text-rose-500/50" />
           </div>
         </div>
-        <div className="bg-blue-600/10 border border-blue-500/20 p-6 rounded-2xl flex flex-col justify-center">
-          <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Balanço Geral do Grupo</p>
+        <div className="bg-primary/5 border border-primary/10 p-6 rounded-2xl flex flex-col justify-center shadow-sm">
+          <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">Balanço Geral do Grupo</p>
           <p className="text-3xl font-black text-white">
             {Object.values(balances).reduce((acc, b) => acc + b, 0)}H
           </p>
@@ -152,7 +163,7 @@ export default function BancoHorasPage() {
             <User size={16} className="text-muted-foreground" />
             <h3 className="text-[10px] font-black uppercase tracking-widest">Saldo por Agente</h3>
           </div>
-          <div className="bg-card border border-white/5 rounded-2xl p-4 space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
+          <div className="bg-[#0d1117] border border-white/5 rounded-2xl p-4 space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar shadow-sm">
             {efetivo.map(ef => {
               const balance = balances[ef.id] || 0;
               return (
@@ -178,11 +189,11 @@ export default function BancoHorasPage() {
               <h3 className="text-[10px] font-black uppercase tracking-widest">Histórico de Lançamentos</h3>
             </div>
             <div className="relative group min-w-[300px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-blue-500 transition-colors" size={14} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={14} />
               <input 
                 type="text" 
                 placeholder="PROCURAR NOS REGISTROS..." 
-                className="w-full bg-card border border-white/5 rounded-lg py-2 pl-10 pr-4 text-[10px] font-bold uppercase tracking-widest focus:border-blue-500/50 outline-none transition-all"
+                className="w-full bg-[#0d1117] border border-white/5 rounded-lg py-2 pl-10 pr-4 text-[10px] font-bold uppercase tracking-widest focus:border-primary/50 outline-none transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -193,7 +204,7 @@ export default function BancoHorasPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="text-[9px] uppercase tracking-widest text-muted-foreground/60 border-b border-white/5 bg-white/5">
+                  <tr className="bg-[#090b10] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     <th className="px-6 py-4 font-black">Data</th>
                     <th className="px-6 py-4 font-black">Agente</th>
                     <th className="px-6 py-4 font-black">Motivo</th>
@@ -211,7 +222,7 @@ export default function BancoHorasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-xs font-bold text-foreground uppercase">{reg.efetivo?.nome_guerra}</span>
+                        <span className="text-xs font-black text-foreground uppercase tracking-tighter">{reg.efetivo?.nome_guerra}</span>
                           <span className="text-[8px] text-muted-foreground">{reg.efetivo?.matricula}</span>
                         </div>
                       </td>
@@ -224,7 +235,7 @@ export default function BancoHorasPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-blue-400 bg-blue-500/5 px-2 py-1 rounded-full border border-blue-500/10">
+                        <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-primary bg-primary/5 px-2 py-1 rounded-full border border-primary/10">
                           <CheckCircle2 size={10} /> APROVADO
                         </span>
                       </td>

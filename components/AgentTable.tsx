@@ -15,6 +15,7 @@ interface Agent {
   status: string;
   grupo_turno: string;
   tipo_escala: string;
+  antiguidade: number;
   contato?: string;
 }
 
@@ -27,16 +28,16 @@ const statusColors: Record<string, string> = {
   ATIVO: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   FERIAS: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   AFASTADO: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-  LICENCO: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  LICENCO: "bg-primary/10 text-primary border-primary/20",
   RESERVA: "bg-slate-500/10 text-slate-500 border-slate-500/20",
 };
 
 const turnoColors: Record<string, string> = {
-  "A": "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  "A": "bg-primary/10 text-primary border-primary/20",
   "B": "bg-amber-500/10 text-amber-500 border-amber-500/20",
   "A II": "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
   "B II": "bg-rose-500/10 text-rose-500 border-rose-500/20",
-  "A I": "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  "A I": "bg-primary/10 text-primary border-primary/20",
   "B I": "bg-amber-500/10 text-amber-500 border-amber-500/20",
 };
 
@@ -61,13 +62,13 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
     <div className="space-y-6">
       {/* Search Bar */}
       <div className="relative group max-w-md">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-500 transition-colors">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
           <Search size={18} />
         </div>
         <input
           type="text"
           placeholder="Buscar por nome, matrícula ou nome de guerra..."
-          className="w-full bg-card border border-white/5 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all placeholder:text-muted-foreground/50 text-sm"
+          className="w-full bg-card border border-white/5 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-muted-foreground/50 text-sm"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -78,7 +79,8 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5 bg-slate-800/40">
+              <tr className="border-b border-white/5 bg-[#090b10]">
+                <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">#</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Matrícula</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Nome de Guerra</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Posto/Grad</th>
@@ -97,13 +99,18 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
                   className="hover:bg-white/[0.01] transition-colors group"
                 >
                   <td className="px-6 py-5">
-                    <span className="font-mono text-sm font-bold text-blue-400 bg-blue-400/5 px-2.5 py-1.5 rounded-lg border border-blue-400/10">
+                    <span className="text-sm font-black text-muted-foreground/50 italic">
+                      {agent.antiguidade}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <span className="font-mono text-sm font-bold text-primary bg-primary/5 px-2.5 py-1.5 rounded-lg border border-primary/10">
                       {agent.matricula}
                     </span>
                   </td>
                   <td className="px-6 py-5">
                     <div className="flex flex-col">
-                      <span className="font-black text-base text-foreground group-hover:text-blue-400 transition-colors tracking-tight">{agent.nome_guerra}</span>
+                      <span className="font-black text-base text-foreground group-hover:text-primary transition-colors tracking-tight uppercase tracking-tighter">{agent.nome_guerra}</span>
                       <span className="text-sm text-muted-foreground/60 truncate max-w-[200px]">{agent.nome_completo}</span>
                     </div>
                   </td>
@@ -131,7 +138,7 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
                       <button 
                         onClick={() => handleEditClick(agent)}
-                        className="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-foreground/70 hover:text-blue-500 transition-all border border-white/5 shadow-sm" 
+                        className="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-foreground/70 hover:text-primary transition-all border border-white/5 shadow-sm" 
                         title="Editar Agente"
                       >
                         <Edit size={18} />

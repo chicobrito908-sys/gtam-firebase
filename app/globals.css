@@ -3,28 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* Cores Executive Tactical (Foscas e Sobrias) */
-  --background: #0f172a; /* Slate 900 */
-  --foreground: #f8fafc; /* Slate 50 */
-  --card: #1e293b; /* Slate 800 */
-  --card-foreground: #f1f5f9; /* Slate 100 */
-  --popover: #1e293b;
+  /* Cores GTAM Original (Fiel ao www.gtam.app.br) */
+  --background: #0b1016; /* Marinho extremamente escuro */
+  --foreground: #f8fafc;
+  --card: #161b22;       /* Superfície dos cards */
+  --card-foreground: #f1f5f9;
+  --popover: #161b22;
   --popover-foreground: #f1f5f9;
-  --primary: #60a5fa; /* Azul mais suave */
-  --primary-foreground: #0f172a;
-  --secondary: #334155; /* Slate 700 */
+  --primary: #7c3aed;    /* Roxo Primário GTAM */
+  --primary-foreground: #ffffff;
+  --secondary: #1f2937;
   --secondary-foreground: #f1f5f9;
-  --muted: #334155;
-  --muted-foreground: #94a3b8; /* Slate 400 */
-  --accent: #60a5fa;
+  --muted: #1f2937;
+  --muted-foreground: #94a3b8;
+  --accent: #7c3aed;
   --accent-foreground: #ffffff;
-  --destructive: #f87171; /* Vermelho suave */
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #334155;
-  --input: #1e293b;
-  --ring: #60a5fa;
-  --sidebar: #0f172a;
-  --sidebar-active: #1e293b;
+  --border: #30363d;
+  --input: #161b22;
+  --ring: #7c3aed;
+  --sidebar: #0d1117;
+  --sidebar-active: #161b22;
 }
 
 body {
@@ -73,14 +73,14 @@ body {
 }
 
 .nav-item:hover {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--primary);
 }
 
 .nav-item.active {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  border-left: 3px solid #3b82f6;
+  background-color: rgba(124, 58, 237, 0.15);
+  color: var(--primary);
+  border-left: 3px solid var(--primary);
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
 }

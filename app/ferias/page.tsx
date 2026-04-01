@@ -33,31 +33,47 @@ export default function FeriasPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   
+  interface EfetivoBasico {
+    id: string;
+    nome_guerra: string;
+    matricula: string;
+    posto_grad: string;
+  }
+
   // Form State
-  const [efetivo, setEfetivo] = useState<any[]>([]);
+  const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
   const [formData, setFormData] = useState({
     efetivo_id: "",
     ano_referencia: new Date().getFullYear(),
     data_inicio: "",
     data_fim: "",
-    status: "AGENDADO"
+    status: "AGENDADO" as 'AGENDADO' | 'GOZADO' | 'CANCELADO'
   });
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: feData } = await supabase
-      .from("ferias")
-      .select("*, efetivo:efetivo_id(nome_guerra, matricula, posto_grad)")
-      .order("data_inicio", { ascending: false });
-    
-    const { data: efData } = await supabase
-      .from("efetivo")
-      .select("id, nome_guerra, matricula, posto_grad")
-      .order("nome_guerra");
+    try {
+      const { data: feData, error: feError } = await supabase
+        .from("ferias")
+        .select("*, efetivo:efetivo_id(nome_guerra, matricula, posto_grad)")
+        .order("data_inicio", { ascending: false });
+      
+      if (feError) throw feError;
 
-    if (feData) setFerias(feData);
-    if (efData) setEfetivo(efData);
-    setLoading(false);
+      const { data: efData, error: efError } = await supabase
+        .from("efetivo")
+        .select("id, nome_guerra, matricula, posto_grad")
+        .order("nome_guerra");
+
+      if (efError) throw efError;
+
+      if (feData) setFerias(feData as unknown as Ferias[]);
+      if (efData) setEfetivo(efData as EfetivoBasico[]);
+    } catch (error) {
+      console.error("Erro ao carregar dados de ferias:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -65,9 +81,11 @@ export default function FeriasPage() {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase.from("ferias").insert([formData]);
-    if (!error) {
+    try {
+      e.preventDefault();
+      const { error } = await supabase.from("ferias").insert([formData]);
+      if (error) throw error;
+      
       setShowModal(false);
       fetchData();
       setFormData({
@@ -75,8 +93,11 @@ export default function FeriasPage() {
         ano_referencia: new Date().getFullYear(),
         data_inicio: "",
         data_fim: "",
-        status: "AGENDADO"
+        status: "AGENDADO" as const
       });
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert("Erro ao salvar ferias: " + errorMsg);
     }
   };
 
@@ -98,10 +119,15 @@ export default function FeriasPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3">
-            <Palmtree className="text-amber-500" /> Gestão de Férias
-          </h1>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Planejamento e Controle de Descanso • GTAM</p>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-lg shadow-amber-500/5">
+            <Palmtree className="text-amber-500" size={24} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tighter text-white">Gestão de Férias</h1>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1 opacity-60">Planejamento e Controle de Descanso • GTAM</p>
+          </div>
+        </div>
         </div>
         <button 
           onClick={() => setShowModal(true)}
@@ -113,11 +139,11 @@ export default function FeriasPage() {
 
       {/* Stats Quick View */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card/40 border border-white/5 p-4 rounded-2xl">
+        <div className="bg-[#0d1117] border border-white/5 p-4 rounded-2xl shadow-sm">
           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Agendadas</p>
           <p className="text-2xl font-black text-amber-500">{ferias.filter(f => f.status === 'AGENDADO').length}</p>
         </div>
-        <div className="bg-card/40 border border-white/5 p-4 rounded-2xl">
+        <div className="bg-[#0d1117] border border-white/5 p-4 rounded-2xl shadow-sm">
           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Em Gozo (Atuais)</p>
           <p className="text-2xl font-black text-emerald-500">
             {ferias.filter(f => {
@@ -126,9 +152,9 @@ export default function FeriasPage() {
             }).length}
           </p>
         </div>
-        <div className="bg-card/40 border border-white/5 p-4 rounded-2xl">
+        <div className="bg-[#0d1117] border border-white/5 p-4 rounded-2xl shadow-sm">
           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total {new Date().getFullYear()}</p>
-          <p className="text-2xl font-black">{ferias.filter(f => f.ano_referencia === new Date().getFullYear()).length}</p>
+          <p className="text-2xl font-black text-white">{ferias.filter(f => f.ano_referencia === new Date().getFullYear()).length}</p>
         </div>
       </div>
 
@@ -151,8 +177,8 @@ export default function FeriasPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] uppercase tracking-widest text-muted-foreground/60 border-b border-white/5 bg-white/5">
-                <th className="px-6 py-4 font-black">Agente</th>
+              <tr className="bg-[#090b10] border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <th className="px-6 py-4">Agente</th>
                 <th className="px-6 py-4 font-black">Ref.</th>
                 <th className="px-6 py-4 font-black">Período</th>
                 <th className="px-6 py-4 font-black text-right">Status</th>
@@ -171,7 +197,7 @@ export default function FeriasPage() {
                         {f.efetivo?.posto_grad.substring(0, 2)}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-foreground group-hover:text-amber-400 transition-colors">{f.efetivo?.nome_guerra}</span>
+                        <span className="text-xs font-black text-foreground group-hover:text-amber-400 transition-colors uppercase tracking-tighter">{f.efetivo?.nome_guerra}</span>
                         <span className="text-[9px] text-muted-foreground uppercase">{f.efetivo?.matricula}</span>
                       </div>
                     </div>
@@ -252,7 +278,7 @@ export default function FeriasPage() {
                   <select 
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold uppercase outline-none"
                     value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value})}
+                    onChange={(e) => setFormData({...formData, status: e.target.value as 'AGENDADO' | 'GOZADO' | 'CANCELADO'})}
                   >
                     <option value="AGENDADO">AGENDADO</option>
                     <option value="GOZADO">GOZADO</option>

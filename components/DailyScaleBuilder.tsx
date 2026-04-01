@@ -153,7 +153,7 @@ export default function DailyScaleBuilder() {
     return (
       <div className={`p-4 rounded-2xl border min-h-[100px] flex flex-col justify-center transition-all ${
         agent 
-        ? 'bg-blue-600/10 border-blue-500/30 shadow-lg shadow-black/20' 
+        ? 'bg-primary/10 border-primary/30 shadow-lg shadow-black/20' 
         : 'bg-black/20 border-white/5 border-dashed hover:border-white/20'
       }`}>
         <div className="flex items-center justify-between mb-2">
@@ -173,7 +173,7 @@ export default function DailyScaleBuilder() {
                  <AlertTriangle size={14} className="text-amber-500 animate-pulse" />
               )}
             </div>
-            <p className="text-[10px] font-bold text-blue-500/70 uppercase tracking-tighter">
+            <p className="text-[10px] font-bold text-primary/70 uppercase tracking-tighter">
               {agent.posto_grad} • {agent.matricula}
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function DailyScaleBuilder() {
       <div className="xl:col-span-3 space-y-4 order-2 xl:order-1">
         <div className="bg-card border border-white/5 rounded-3xl p-6 shadow-2xl">
           <h3 className="text-sm font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-            <UserPlus size={18} className="text-blue-500" />
+            <UserPlus size={18} className="text-primary" />
             Integrantes
           </h3>
           
@@ -205,19 +205,19 @@ export default function DailyScaleBuilder() {
                   className={`p-3 rounded-xl border transition-all flex flex-col gap-1 group relative ${
                     isUsed 
                     ? 'opacity-30 pointer-events-none border-transparent bg-white/5' 
-                    : 'bg-white/[0.02] border-white/5 hover:border-blue-500/40 cursor-default shadow-lg shadow-black/10'
+                    : 'bg-white/[0.02] border-white/5 hover:border-primary/40 cursor-default shadow-lg shadow-black/10'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-white group-hover:text-blue-400 transition-colors uppercase">{agent.nome_guerra}</span>
+                    <span className="text-xs font-black text-white group-hover:text-primary transition-colors uppercase">{agent.nome_guerra}</span>
                     <span className="text-[9px] font-black text-muted-foreground/40">{agent.posto_grad}</span>
                   </div>
                   
                   <div className="flex items-center justify-between mt-1">
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                      <button onClick={() => addToScale(agent.id, "GTAM 01", "01")} className="bg-blue-600/20 hover:bg-blue-600 text-[9px] font-black p-1.5 rounded-lg text-blue-400 hover:text-white transition-all shadow-lg active:scale-90">01</button>
-                      <button onClick={() => addToScale(agent.id, "GTAM 02", "02")} className="bg-blue-600/20 hover:bg-blue-600 text-[9px] font-black p-1.5 rounded-lg text-blue-400 hover:text-white transition-all shadow-lg active:scale-90">02</button>
-                      <button onClick={() => addToScale(agent.id, "GTAM 03", "03")} className="bg-blue-600/20 hover:bg-blue-600 text-[9px] font-black p-1.5 rounded-lg text-blue-400 hover:text-white transition-all shadow-lg active:scale-90">03</button>
+                      <button onClick={() => addToScale(agent.id, "GTAM 01", "01")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">01</button>
+                      <button onClick={() => addToScale(agent.id, "GTAM 02", "02")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">02</button>
+                      <button onClick={() => addToScale(agent.id, "GTAM 03", "03")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">03</button>
                       <button onClick={() => addToScale(agent.id, "GTAM 03", "04")} className="bg-rose-600/20 hover:bg-rose-600 text-[9px] font-black p-1.5 rounded-lg text-rose-400 hover:text-white transition-all shadow-lg active:scale-90">04</button>
                     </div>
                   </div>
@@ -238,28 +238,28 @@ export default function DailyScaleBuilder() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
             <div className="flex items-center gap-6">
               <div className="relative">
-                <input 
-                  type="date" 
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="bg-transparent border-none text-3xl font-black text-white p-0 focus:ring-0 outline-none w-fit uppercase cursor-pointer hover:text-blue-400 transition-colors"
-                />
-                <Calendar className="absolute -right-8 top-1 text-blue-600 pointer-events-none" size={20} />
-              </div>
-              <div className="h-10 w-px bg-white/10 hidden md:block" />
-              <div>
-                <p className="text-xs font-black text-blue-500 uppercase tracking-[0.3em] mt-1 flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse" />
-                   Montagem Operacional GTAM
-                </p>
-              </div>
+                  <input 
+                    type="date" 
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="bg-transparent border-none text-3xl font-black text-white p-0 focus:ring-0 outline-none w-fit uppercase cursor-pointer hover:text-primary transition-colors"
+                  />
+                  <Calendar className="absolute -right-8 top-1 text-primary pointer-events-none" size={20} />
+                </div>
+                <div className="h-10 w-px bg-white/10 hidden md:block" />
+                <div>
+                  <p className="text-xs font-black text-primary uppercase tracking-[0.3em] mt-1 flex items-center gap-2">
+                     <div className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" />
+                     Montagem Operacional GTAM
+                  </p>
+                </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
               <select 
                 value={turno}
                 onChange={(e) => setTurno(e.target.value)}
-                className="bg-slate-800 border border-white/10 rounded-2xl px-6 py-4 text-sm font-black text-white outline-none focus:ring-2 focus:ring-blue-500/30 transition-all uppercase appearance-none cursor-pointer"
+                className="bg-slate-800 border border-white/10 rounded-2xl px-6 py-4 text-sm font-black text-white outline-none focus:ring-2 focus:ring-primary/30 transition-all uppercase appearance-none cursor-pointer"
               >
                 <option value="24x72">24x72</option>
                 <option value="Manhã">07h-19h</option>
@@ -268,7 +268,7 @@ export default function DailyScaleBuilder() {
               <button 
                 onClick={handleSave}
                 disabled={loading}
-                className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-black transition-all shadow-2xl shadow-blue-900/40 active:scale-95 text-xs uppercase tracking-[0.2em]"
+                className="flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-10 py-4 rounded-2xl font-black transition-all shadow-2xl shadow-primary/20 active:scale-95 text-xs uppercase tracking-[0.2em]"
               >
                 {loading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Save size={18} />}
                 Salvar
@@ -279,7 +279,7 @@ export default function DailyScaleBuilder() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 mb-12">
             <div className="space-y-5 bg-white/[0.02] p-6 rounded-[32px] border border-white/5">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-white text-lg">01</div>
+                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">01</div>
                 <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 01</h4>
               </div>
               {renderMotoSlot("GTAM 01", "01", "Piloto 01")}
@@ -287,15 +287,15 @@ export default function DailyScaleBuilder() {
 
             <div className="space-y-5 bg-white/[0.02] p-6 rounded-[32px] border border-white/5">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-white text-lg">02</div>
+                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">02</div>
                 <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 02</h4>
               </div>
               {renderMotoSlot("GTAM 02", "02", "Piloto 02")}
             </div>
 
-            <div className="space-y-5 bg-blue-600/[0.03] p-6 rounded-[32px] border border-blue-500/10">
+            <div className="space-y-5 bg-primary/[0.03] p-6 rounded-[32px] border border-primary/10">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-white text-lg">03</div>
+                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">03</div>
                 <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 03</h4>
               </div>
               <div className="space-y-3">
@@ -310,7 +310,7 @@ export default function DailyScaleBuilder() {
                 onClick={handleShare}
                 className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white px-10 py-5 rounded-2xl font-black transition-all border border-white/10 shadow-2xl text-[10px] uppercase tracking-[0.3em] group"
               >
-                <Share2 size={18} className="text-blue-400 group-hover:scale-110 transition-transform" /> 
+                <Share2 size={18} className="text-primary group-hover:scale-110 transition-transform" /> 
                 <span>Publicar WhatsApp</span>
              </button>
           </div>

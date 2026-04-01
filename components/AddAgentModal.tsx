@@ -25,7 +25,8 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
     grupo_turno: "ALFA",
     tipo_escala: "24x72",
     status: "ATIVO",
-    setor: "GTAM"
+    setor: "GTAM",
+    antiguidade: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +51,8 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
         grupo_turno: "ALFA",
         tipo_escala: "24x72",
         status: "ATIVO",
-        setor: "GTAM"
+        setor: "GTAM",
+        antiguidade: ""
       });
     } catch (error: any) {
       alert("Erro ao cadastrar agente: " + error.message);
@@ -80,14 +82,14 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
             className="relative w-full max-w-2xl bg-[#0a0f1e] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden"
           >
             {/* Header Header */}
-            <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 p-8 border-b border-white/5 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-primary/20 to-indigo-600/20 p-8 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center border border-white/10">
+                <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_8px_16px_rgba(124,58,237,0.3)]">
                   <Shield className="text-white" size={28} />
                 </div>
                 <div>
                   <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Novo Agente</h2>
-                  <p className="text-sm text-blue-400 font-bold uppercase tracking-[0.2em] opacity-60">Cadastro Operacional GTAM</p>
+                  <p className="text-sm text-primary font-bold uppercase tracking-[0.2em] opacity-60">Cadastro Operacional GTAM</p>
                 </div>
               </div>
               <button
@@ -104,11 +106,11 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">Nome Completo</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500/40" size={18} />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={18} />
                     <input
                       required
                       type="text"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all text-base font-bold text-white placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-base font-bold text-white placeholder:text-white/20"
                       placeholder="NOME COMPLETO DO SERVIDOR"
                       value={formData.nome_completo}
                       onChange={(e) => setFormData({ ...formData, nome_completo: e.target.value.toUpperCase() })}
@@ -165,20 +167,19 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
                   </div>
                 </div>
 
-                {/* Equipe / Turno */}
+                {/* Antiguidade */}
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Equipe de Serviço</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Antiguidade (#)</label>
                   <div className="relative">
-                    <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500/40" size={18} />
-                    <select
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all text-base font-bold appearance-none text-white"
-                      value={formData.grupo_turno}
-                      onChange={(e) => setFormData({ ...formData, grupo_turno: e.target.value })}
-                    >
-                      {EQUIPES.map((eq) => (
-                        <option key={eq} value={eq} className="bg-[#0a0f1e]">{eq}</option>
-                      ))}
-                    </select>
+                    < Award className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={18} />
+                    <input
+                      required
+                      type="number"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-base font-bold text-white"
+                      placeholder="0"
+                      value={formData.antiguidade}
+                      onChange={(e) => setFormData({ ...formData, antiguidade: e.target.value })}
+                    />
                   </div>
                 </div>
               </div>
@@ -188,7 +189,7 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border border-white/10 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border border-white/10 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 shadow-[0_10px_30px_rgba(124,58,237,0.2)]"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />

@@ -198,9 +198,9 @@ function buildForceCards(
       title: "Servico 24x72",
       subtitle: "Escala de 24 horas",
       icon: Shield,
-      iconColor: "text-violet-400",
-      panelTint: "bg-violet-500/10",
-      barColor: "bg-violet-500",
+      iconColor: "text-primary",
+      panelTint: "bg-primary/10",
+      barColor: "bg-primary",
     },
     {
       key: "MANHA",
@@ -265,11 +265,11 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-[22px] border border-white/5 bg-[#182238] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+    <section className="rounded-[22px] border border-white/5 bg-card shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
       <div className="flex items-center justify-between border-b border-white/5 px-5 py-5">
         <div className="flex items-center gap-3">
-          <Icon size={18} className="text-blue-400" />
-          <h2 className="text-[18px] font-extrabold tracking-tight text-white">{title}</h2>
+          <Icon size={18} className="text-primary" />
+          <h2 className="text-[18px] font-black uppercase tracking-tight text-white">{title}</h2>
         </div>
         {right}
       </div>
@@ -366,7 +366,8 @@ export default function Home() {
           forceCards: buildForceCards(efetivo, escalaHoje, afastamentosAtivos, feriasAtivas),
         });
       } catch (error) {
-        console.error("Erro ao carregar dashboard:", error);
+        const errorMsg = error instanceof Error ? error.message : "desconhecido";
+        console.error("Erro ao carregar dashboard:", errorMsg);
       } finally {
         setLoading(false);
       }
@@ -410,7 +411,7 @@ export default function Home() {
               key={card.key}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-[18px] border border-white/5 bg-[#11192b] p-5"
+              className="rounded-[18px] border border-white/5 bg-[#0d1117] p-5 shadow-inner"
             >
               <div className="mb-5 flex items-center gap-4">
                 <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] ${card.panelTint}`}>
@@ -428,9 +429,9 @@ export default function Home() {
                   { label: "DISPONIVEL", value: card.available, color: "text-emerald-400" },
                   { label: "IMPEDIDO", value: card.blocked, color: "text-rose-400" },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-[12px] bg-[#1b2740] px-3 py-3 text-center">
+                  <div key={item.label} className="rounded-[12px] bg-[#1a1f2e] px-3 py-3 text-center border border-white/5">
                     <p className={`text-[16px] font-black ${item.color}`}>{item.value}</p>
-                    <p className="text-[11px] font-semibold tracking-[0.15em] text-[#8ea2cc]">{item.label}</p>
+                    <p className="text-[11px] font-bold tracking-[0.15em] text-[#8ea2cc] opacity-60">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -456,7 +457,7 @@ export default function Home() {
 
       <SectionCard title="Escala de Hoje" icon={CalendarDays}>
         {groupedEscalas.size === 0 ? (
-          <div className="flex min-h-[120px] items-center justify-center rounded-[14px] bg-[#11192b] px-6 text-center">
+          <div className="flex min-h-[120px] items-center justify-center rounded-[14px] bg-[#0d1117] px-6 text-center border border-white/5">
             <p className="text-sm text-[#8ea2cc]">Nenhuma escala lancada para hoje.</p>
           </div>
         ) : (
@@ -474,9 +475,9 @@ export default function Home() {
                     </div>
                     <div className="space-y-2">
                       {items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#1b2740] px-3 py-3">
+                        <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#0d1117] px-3 py-3 border border-white/5">
                           <div className="flex min-w-0 items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-[10px] font-black text-blue-300">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-[10px] font-black text-primary">
                               {avatarText(item.efetivo?.nome_guerra)}
                             </div>
                             <div className="min-w-0">
@@ -515,9 +516,9 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {(data?.afastamentos || []).slice(0, 5).map((item) => (
-                <div key={item.id} className="rounded-[14px] bg-[#11192b] px-4 py-4">
+                <div key={item.id} className="rounded-[14px] bg-[#0d1117] px-4 py-4 border border-white/5 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra || "Sem nome"}</p>
+                    <p className="text-sm font-bold text-white uppercase tracking-tighter">{item.efetivo?.nome_guerra || "Sem nome"}</p>
                     <span className="rounded-md bg-rose-500/10 px-2 py-1 text-[10px] font-semibold text-rose-300">
                       {item.tipo}
                     </span>
@@ -545,9 +546,9 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {(data?.ferias || []).slice(0, 5).map((item) => (
-                <div key={item.id} className="rounded-[14px] bg-[#11192b] px-4 py-4">
+                <div key={item.id} className="rounded-[14px] bg-[#0d1117] px-4 py-4 border border-white/5 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra || "Sem nome"}</p>
+                    <p className="text-sm font-bold text-white uppercase tracking-tighter">{item.efetivo?.nome_guerra || "Sem nome"}</p>
                     <span className="rounded-md bg-amber-500/10 px-2 py-1 text-[10px] font-semibold text-amber-300">
                       {item.ano_referencia ?? "-"}
                     </span>
