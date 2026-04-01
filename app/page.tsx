@@ -8,7 +8,6 @@ import {
   BriefcaseMedical,
   CalendarCheck,
   CalendarDays,
-  Clock,
   HeartPulse,
   Moon,
   Palmtree,
@@ -123,7 +122,11 @@ type DashboardData = {
 };
 
 function todayStr() {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function formatDate(date?: string) {
@@ -132,11 +135,28 @@ function formatDate(date?: string) {
   return Number.isNaN(parsed.getTime()) ? date : parsed.toLocaleDateString("pt-BR");
 }
 
+function formatDateRange(start?: string, end?: string) {
+  if (!start && !end) return "-";
+  if (start === end) return formatDate(start);
+  return `${formatDate(start)} ate ${formatDate(end)}`;
+}
+
 function normalizeTurno(turno?: string) {
   const value = String(turno || "").toUpperCase();
   if (value.includes("24") || value.includes("SERV")) return "24x72";
   if (value.includes("MANH") || value === "A" || value === "A II" || value.includes("ALFA")) return "MANHA";
   return "TARDE";
+}
+
+function formatTurnoLabel(turno: string) {
+  switch (turno) {
+    case "24x72":
+      return "Servico 24x72";
+    case "MANHA":
+      return "Turno Manha";
+    default:
+      return "Turno Tarde";
+  }
 }
 
 function normalizeScaleGroup(agent: Efetivo) {
@@ -246,7 +266,7 @@ function SectionCard({
 }) {
   return (
     <section className="rounded-[22px] border border-white/5 bg-[#182238] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
-      <div className="flex items-center justify-between px-5 py-5 border-b border-white/5">
+      <div className="flex items-center justify-between border-b border-white/5 px-5 py-5">
         <div className="flex items-center gap-3">
           <Icon size={18} className="text-blue-400" />
           <h2 className="text-[18px] font-extrabold tracking-tight text-white">{title}</h2>
@@ -269,15 +289,15 @@ export default function Home() {
         const today = todayStr();
         const in30Days = new Date();
         in30Days.setDate(in30Days.getDate() + 30);
-        const next30Str = in30Days.toISOString().split("T")[0];
+        const next30Str = todayStrFromDate(in30Days);
 
         const in30Past = new Date();
         in30Past.setDate(in30Past.getDate() - 30);
-        const prev30Str = in30Past.toISOString().split("T")[0];
+        const prev30Str = todayStrFromDate(in30Past);
 
         const in180Past = new Date();
         in180Past.setDate(in180Past.getDate() - 180);
-        const prev180Str = in180Past.toISOString().split("T")[0];
+        const prev180Str = todayStrFromDate(in180Past);
 
         const [
           { data: efetivoRaw },
@@ -315,7 +335,7 @@ export default function Home() {
             matricula: agent.matricula || "-",
             total: escalas.filter((item) => String(item.efetivo_id) === String(agent.id) && item.data >= prev30Str).length,
           }))
-          .sort((a, b) => b.total - a.total)
+          .sort((left, right) => right.total - left.total)
           .slice(0, 5);
 
         const rankingAssiduidade = efetivoAtivo
@@ -327,7 +347,7 @@ export default function Home() {
               (item) => String(item.efetivo_id) === String(agent.id) && isHealthLeave(item) && item.data_inicio >= prev180Str
             ).length,
           }))
-          .sort((a, b) => a.total - b.total)
+          .sort((left, right) => left.total - right.total)
           .slice(0, 5);
 
         setData({
@@ -357,8 +377,8 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="h-[80vh] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
+      <div className="flex h-[80vh] flex-col items-center justify-center space-y-4">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500/20 border-t-blue-500" />
         <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Sincronizando painel tatico...</p>
       </div>
     );
@@ -382,9 +402,9 @@ export default function Home() {
       <SectionCard
         title="Forca Disponivel Hoje"
         icon={Shield}
-        right={<span className="text-sm text-[#8fa6d8] capitalize">{dateLabel}</span>}
+        right={<span className="text-sm capitalize text-[#8fa6d8]">{dateLabel}</span>}
       >
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
           {(data?.forceCards || []).map((card) => (
             <motion.div
               key={card.key}
@@ -392,8 +412,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               className="rounded-[18px] border border-white/5 bg-[#11192b] p-5"
             >
-              <div className="flex items-center gap-4 mb-5">
-                <div className={`h-11 w-11 rounded-[14px] ${card.panelTint} flex items-center justify-center`}>
+              <div className="mb-5 flex items-center gap-4">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] ${card.panelTint}`}>
                   <card.icon size={22} className={card.iconColor} />
                 </div>
                 <div>
@@ -402,7 +422,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="mb-4 grid grid-cols-3 gap-2">
                 {[
                   { label: "TOTAL", value: card.total, color: "text-white" },
                   { label: "DISPONIVEL", value: card.available, color: "text-emerald-400" },
@@ -415,7 +435,7 @@ export default function Home() {
                 ))}
               </div>
 
-              <div className="h-2 rounded-full bg-[#27344f] overflow-hidden mb-4">
+              <div className="mb-4 h-2 overflow-hidden rounded-full bg-[#27344f]">
                 <div
                   className={`${card.barColor} h-full rounded-full`}
                   style={{ width: card.total > 0 ? `${Math.round((card.available / card.total) * 100)}%` : "0%" }}
@@ -436,19 +456,26 @@ export default function Home() {
 
       <SectionCard title="Escala de Hoje" icon={CalendarDays}>
         {groupedEscalas.size === 0 ? (
-          <div className="min-h-[84px]" />
+          <div className="flex min-h-[120px] items-center justify-center rounded-[14px] bg-[#11192b] px-6 text-center">
+            <p className="text-sm text-[#8ea2cc]">Nenhuma escala lancada para hoje.</p>
+          </div>
         ) : (
           <div className="space-y-5">
             {Array.from(groupedEscalas.entries()).map(([turno, equipes]) => (
               <div key={turno} className="space-y-3">
-                <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8fa6d8]">{turno}</h3>
+                <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8fa6d8]">{formatTurnoLabel(turno)}</h3>
                 {Array.from(equipes.entries()).map(([equipe, items]) => (
                   <div key={equipe} className="rounded-[14px] bg-[#11192b] p-4">
-                    <p className="mb-3 text-sm font-bold text-white">{equipe}</p>
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-sm font-bold text-white">{equipe}</p>
+                      <span className="rounded-md bg-white/5 px-3 py-1 text-[11px] font-semibold text-[#c4d2ee]">
+                        {items.length} escalado{items.length > 1 ? "s" : ""}
+                      </span>
+                    </div>
                     <div className="space-y-2">
                       {items.map((item) => (
                         <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#1b2740] px-3 py-3">
-                          <div className="flex items-center gap-3 min-w-0">
+                          <div className="flex min-w-0 items-center gap-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-[10px] font-black text-blue-300">
                               {avatarText(item.efetivo?.nome_guerra)}
                             </div>
@@ -471,35 +498,61 @@ export default function Home() {
         )}
       </SectionCard>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <SectionCard title="Afastamentos Ativos" icon={BriefcaseMedical}>
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <SectionCard
+          title="Afastamentos Ativos"
+          icon={BriefcaseMedical}
+          right={
+            <span className="rounded-md bg-white/5 px-3 py-1 text-[11px] font-semibold text-[#c4d2ee]">
+              {data?.afastamentos.length || 0}
+            </span>
+          }
+        >
           {(data?.afastamentos.length || 0) === 0 ? (
-            <div className="min-h-[40px]" />
+            <div className="flex min-h-[120px] items-center justify-center rounded-[14px] bg-[#11192b] px-6 text-center">
+              <p className="text-sm text-[#8ea2cc]">Nenhum afastamento ativo no momento.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {(data?.afastamentos || []).slice(0, 5).map((item) => (
                 <div key={item.id} className="rounded-[14px] bg-[#11192b] px-4 py-4">
-                  <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra}</p>
-                  <p className="text-xs text-[#8ea2cc]">
-                    {item.tipo} • {formatDate(item.data_inicio)} ate {formatDate(item.data_fim)}
-                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra || "Sem nome"}</p>
+                    <span className="rounded-md bg-rose-500/10 px-2 py-1 text-[10px] font-semibold text-rose-300">
+                      {item.tipo}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#8ea2cc]">{formatDateRange(item.data_inicio, item.data_fim)}</p>
                 </div>
               ))}
             </div>
           )}
         </SectionCard>
 
-        <SectionCard title="Ferias Proximas" icon={Umbrella}>
+        <SectionCard
+          title="Ferias Proximas"
+          icon={Umbrella}
+          right={
+            <span className="rounded-md bg-white/5 px-3 py-1 text-[11px] font-semibold text-[#c4d2ee]">
+              {data?.ferias.length || 0}
+            </span>
+          }
+        >
           {(data?.ferias.length || 0) === 0 ? (
-            <div className="min-h-[40px]" />
+            <div className="flex min-h-[120px] items-center justify-center rounded-[14px] bg-[#11192b] px-6 text-center">
+              <p className="text-sm text-[#8ea2cc]">Nenhuma ferias agendada para os proximos 30 dias.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {(data?.ferias || []).slice(0, 5).map((item) => (
                 <div key={item.id} className="rounded-[14px] bg-[#11192b] px-4 py-4">
-                  <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra}</p>
-                  <p className="text-xs text-[#8ea2cc]">
-                    {formatDate(item.data_inicio)} • Ref: {item.ano_referencia ?? "-"}
-                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-bold text-white">{item.efetivo?.nome_guerra || "Sem nome"}</p>
+                    <span className="rounded-md bg-amber-500/10 px-2 py-1 text-[10px] font-semibold text-amber-300">
+                      {item.ano_referencia ?? "-"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#8ea2cc]">{formatDateRange(item.data_inicio, item.data_fim)}</p>
                 </div>
               ))}
             </div>
@@ -508,7 +561,10 @@ export default function Home() {
       </div>
 
       <div className="hidden">
-        {(data?.rankingProdutividade.length || 0) + (data?.rankingAssiduidade.length || 0) + (data?.faltasMes || 0) + (data?.usuariosPendentes || 0)}
+        {(data?.rankingProdutividade.length || 0) +
+          (data?.rankingAssiduidade.length || 0) +
+          (data?.faltasMes || 0) +
+          (data?.usuariosPendentes || 0)}
         <Trophy size={1} />
         <HeartPulse size={1} />
         <CalendarCheck size={1} />
@@ -521,4 +577,11 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+function todayStrFromDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
