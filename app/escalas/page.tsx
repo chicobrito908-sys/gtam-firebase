@@ -19,6 +19,13 @@ import DailyScaleBuilder from "@/components/DailyScaleBuilder";
 
 const getMonthStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
 
+const formatLocalDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const formatMonthParam = (date: Date) => {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${date.getFullYear()}-${month}`;
@@ -69,8 +76,8 @@ function EscalasGradePageContent() {
   // Bulk Form State
   const [bulkData, setBulkData] = useState({
     selectedAgents: [] as string[],
-    dateStart: new Date().toISOString().split('T')[0],
-    dateEnd: new Date().toISOString().split('T')[0],
+    dateStart: formatLocalDate(new Date()),
+    dateEnd: formatLocalDate(new Date()),
     turno: "24x72",
     equipe: "ALFA",
     funcao: "Patrulheiro",
@@ -82,8 +89,8 @@ function EscalasGradePageContent() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
-      const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), daysInMonth).toISOString().split('T')[0];
+      const firstDay = formatLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+      const lastDay = formatLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), daysInMonth));
 
       // 1. Buscar Efetivo
       const { data: efData } = await supabase
@@ -136,12 +143,12 @@ function EscalasGradePageContent() {
   };
 
   const getEscalaForDay = (agentId: string, day: number) => {
-    const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toISOString().split('T')[0];
+    const dateStr = formatLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
     return escalasLookup[`${agentId}:${dateStr}`];
   };
 
   const openCellModal = (agent: any, day: number) => {
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toISOString().split('T')[0];
+    const date = formatLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
     const escala = escalasLookup[`${agent.id}:${date}`];
 
     setSelectedCell({
@@ -165,8 +172,8 @@ function EscalasGradePageContent() {
   };
 
   const filteredEfetivo = efetivo.filter(e => 
-    e.nome_guerra.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.matricula.includes(searchTerm)
+    String(e.nome_guerra || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(e.matricula || "").includes(searchTerm)
   );
 
   const handleBulkSubmit = async (e: React.FormEvent) => {
@@ -183,7 +190,7 @@ function EscalasGradePageContent() {
       const inserts = [];
 
       for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().split('T')[0];
+        const dateStr = formatLocalDate(d);
         
         for (const agentId of bulkData.selectedAgents) {
           inserts.push({

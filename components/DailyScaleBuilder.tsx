@@ -14,6 +14,13 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+const formatLocalDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 interface Agent {
   id: string;
   nome_guerra: string;
@@ -30,7 +37,7 @@ interface ScaleEntry {
 }
 
 export default function DailyScaleBuilder() {
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(formatLocalDate(new Date()));
   const [efetivo, setEfetivo] = useState<Agent[]>([]);
   const [selectedAgents, setSelectedAgents] = useState<ScaleEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,7 +87,8 @@ export default function DailyScaleBuilder() {
         turno: turno,
         efetivo_id: entry.agentId,
         equipe: entry.prefixo,
-        funcao: entry.funcao
+        funcao: entry.funcao,
+        status: "CONFIRMADO"
       }));
 
       // 3. Inserir
