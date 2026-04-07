@@ -1,0 +1,330 @@
+﻿
+> my-app@0.1.0 test
+> jest --watchAll=false --watchAll=false
+
+  console.error
+    Error: Uncaught [ReferenceError: Users is not defined]
+        at reportException (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+        at innerInvokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+        at invokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+        at HTMLUnknownElementImpl._dispatch (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+        at HTMLUnknownElementImpl.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+        at HTMLUnknownElement.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+        at Object.invokeGuardedCallbackDev (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+        at invokeGuardedCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+        at beginWork$1 (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+        at performUnitOfWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26599:12)
+        at workLoopSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26505:5)
+        at renderRootSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26473:7)
+        at performConcurrentWorkOnRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25777:74)
+        at flushActQueue (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2667:24)
+        at act (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2582:11)
+        at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\act-compat.js:46:25
+        at renderRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:189:26)
+        at render (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:291:10)
+        at Object.<anonymous> (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\__tests__\DailyScaleBuilder.test.tsx:26:11)
+        at Promise.finally.completed (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at _runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:275:16)
+        at runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:343:7) {
+      detail: ReferenceError: Users is not defined
+          at Users (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\components\DailyScaleBuilder.tsx:430:18)
+          at renderWithHooks (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+          at mountIndeterminateComponent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+          at beginWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+          at HTMLUnknownElement.callCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+          at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+          at innerInvokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+          at invokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+          at HTMLUnknownElementImpl._dispatch (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+          at HTMLUnknownElementImpl.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+          at HTMLUnknownElement.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+          at Object.invokeGuardedCallbackDev (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+          at invokeGuardedCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+          at beginWork$1 (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+          at performUnitOfWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26599:12)
+          at workLoopSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26505:5)
+          at renderRootSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26473:7)
+          at performConcurrentWorkOnRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25777:74)
+          at flushActQueue (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2667:24)
+          at act (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2582:11)
+          at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\act-compat.js:46:25
+          at renderRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:189:26)
+          at render (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:291:10)
+          at Object.<anonymous> (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\__tests__\DailyScaleBuilder.test.tsx:26:11)
+          at Promise.finally.completed (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+          at _callCircusTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+          at _runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+          at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+          at run (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+          at jestAdapter (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\runner.js:101:19)
+          at runTestInternal (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:275:16)
+          at runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:343:7),
+      type: 'unhandled exception'
+    }
+
+    [0m [90m 24 |[39m describe([32m'DailyScaleBuilder Logic'[39m[33m,[39m () [33m=>[39m {
+     [90m 25 |[39m   it([32m'deve renderizar o componente corretamente'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 26 |[39m     render([33m<[39m[33mDailyScaleBuilder[39m [33m/[39m[33m>[39m)
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 27 |[39m     [90m// Verifica se o t├¡tulo de "Dispon├¡veis" aparece[39m
+     [90m 28 |[39m     [36mconst[39m title [33m=[39m [36mawait[39m screen[33m.[39mfindByText([35m/Dispon├¡veis/i[39m)
+     [90m 29 |[39m     expect(title)[33m.[39mtoBeInTheDocument()[0m
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at reportException (node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:70:28)
+      at innerInvokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+      at invokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+      at HTMLUnknownElementImpl._dispatch (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+      at HTMLUnknownElementImpl.dispatchEvent (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+      at HTMLUnknownElement.dispatchEvent (node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+      at Object.invokeGuardedCallbackDev (node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+      at invokeGuardedCallback (node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+      at beginWork$1 (node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26599:12)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26505:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26473:7)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25777:74)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/DailyScaleBuilder.test.tsx:26:11)
+
+  console.error
+    Error: Uncaught [ReferenceError: Users is not defined]
+        at reportException (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+        at innerInvokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+        at invokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+        at HTMLUnknownElementImpl._dispatch (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+        at HTMLUnknownElementImpl.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+        at HTMLUnknownElement.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+        at Object.invokeGuardedCallbackDev (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+        at invokeGuardedCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+        at beginWork$1 (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+        at performUnitOfWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26599:12)
+        at workLoopSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26505:5)
+        at renderRootSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26473:7)
+        at recoverFromConcurrentError (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25889:20)
+        at performConcurrentWorkOnRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25789:22)
+        at flushActQueue (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2667:24)
+        at act (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2582:11)
+        at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\act-compat.js:46:25
+        at renderRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:189:26)
+        at render (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:291:10)
+        at Object.<anonymous> (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\__tests__\DailyScaleBuilder.test.tsx:26:11)
+        at Promise.finally.completed (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at _runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:275:16)
+        at runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:343:7) {
+      detail: ReferenceError: Users is not defined
+          at Users (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\components\DailyScaleBuilder.tsx:430:18)
+          at renderWithHooks (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+          at mountIndeterminateComponent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+          at beginWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+          at HTMLUnknownElement.callCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+          at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+          at innerInvokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+          at invokeEventListeners (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+          at HTMLUnknownElementImpl._dispatch (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+          at HTMLUnknownElementImpl.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+          at HTMLUnknownElement.dispatchEvent (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+          at Object.invokeGuardedCallbackDev (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+          at invokeGuardedCallback (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+          at beginWork$1 (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+          at performUnitOfWork (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26599:12)
+          at workLoopSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26505:5)
+          at renderRootSync (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:26473:7)
+          at recoverFromConcurrentError (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25889:20)
+          at performConcurrentWorkOnRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react-dom\cjs\react-dom.development.js:25789:22)
+          at flushActQueue (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2667:24)
+          at act (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\react\cjs\react.development.js:2582:11)
+          at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\act-compat.js:46:25
+          at renderRoot (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:189:26)
+          at render (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\@testing-library\react\dist\pure.js:291:10)
+          at Object.<anonymous> (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\__tests__\DailyScaleBuilder.test.tsx:26:11)
+          at Promise.finally.completed (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+          at _callCircusTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+          at _runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+          at C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+          at run (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+          at jestAdapter (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-circus\build\runner.js:101:19)
+          at runTestInternal (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:275:16)
+          at runTest (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\node_modules\jest-runner\build\index.js:343:7),
+      type: 'unhandled exception'
+    }
+
+    [0m [90m 24 |[39m describe([32m'DailyScaleBuilder Logic'[39m[33m,[39m () [33m=>[39m {
+     [90m 25 |[39m   it([32m'deve renderizar o componente corretamente'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 26 |[39m     render([33m<[39m[33mDailyScaleBuilder[39m [33m/[39m[33m>[39m)
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 27 |[39m     [90m// Verifica se o t├¡tulo de "Dispon├¡veis" aparece[39m
+     [90m 28 |[39m     [36mconst[39m title [33m=[39m [36mawait[39m screen[33m.[39mfindByText([35m/Dispon├¡veis/i[39m)
+     [90m 29 |[39m     expect(title)[33m.[39mtoBeInTheDocument()[0m
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at reportException (node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:70:28)
+      at innerInvokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+      at invokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+      at HTMLUnknownElementImpl._dispatch (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+      at HTMLUnknownElementImpl.dispatchEvent (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+      at HTMLUnknownElement.dispatchEvent (node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+      at Object.invokeGuardedCallbackDev (node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+      at invokeGuardedCallback (node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+      at beginWork$1 (node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26599:12)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26505:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26473:7)
+      at recoverFromConcurrentError (node_modules/react-dom/cjs/react-dom.development.js:25889:20)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25789:22)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/DailyScaleBuilder.test.tsx:26:11)
+
+  console.error
+    The above error occurred in the <DailyScaleBuilder> component:
+    
+        at initialDate (C:\Users\Usu├írio\.gemini\antigravity\scratch\escalante-pro\components\DailyScaleBuilder.tsx:83:45)
+    
+    Consider adding an error boundary to your tree to customize error handling behavior.
+    Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+    [0m [90m 24 |[39m describe([32m'DailyScaleBuilder Logic'[39m[33m,[39m () [33m=>[39m {
+     [90m 25 |[39m   it([32m'deve renderizar o componente corretamente'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 26 |[39m     render([33m<[39m[33mDailyScaleBuilder[39m [33m/[39m[33m>[39m)
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 27 |[39m     [90m// Verifica se o t├¡tulo de "Dispon├¡veis" aparece[39m
+     [90m 28 |[39m     [36mconst[39m title [33m=[39m [36mawait[39m screen[33m.[39mfindByText([35m/Dispon├¡veis/i[39m)
+     [90m 29 |[39m     expect(title)[33m.[39mtoBeInTheDocument()[0m
+
+      at logCapturedError (node_modules/react-dom/cjs/react-dom.development.js:18704:23)
+      at update.callback (node_modules/react-dom/cjs/react-dom.development.js:18737:5)
+      at callCallback (node_modules/react-dom/cjs/react-dom.development.js:15036:12)
+      at commitUpdateQueue (node_modules/react-dom/cjs/react-dom.development.js:15057:9)
+      at commitLayoutEffectOnFiber (node_modules/react-dom/cjs/react-dom.development.js:23430:13)
+      at commitLayoutMountEffects_complete (node_modules/react-dom/cjs/react-dom.development.js:24727:9)
+      at commitLayoutEffects_begin (node_modules/react-dom/cjs/react-dom.development.js:24713:7)
+      at commitLayoutEffects (node_modules/react-dom/cjs/react-dom.development.js:24651:3)
+      at commitRootImpl (node_modules/react-dom/cjs/react-dom.development.js:26862:5)
+      at commitRoot (node_modules/react-dom/cjs/react-dom.development.js:26721:5)
+      at finishConcurrentRender (node_modules/react-dom/cjs/react-dom.development.js:25931:9)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25848:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/DailyScaleBuilder.test.tsx:26:11)
+
+node.exe : FAIL __tests__/DailyScaleBuilder.test.tsx
+No linha:1 caractere:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL __tests__/...u 
+   ilder.test.tsx:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  DailyScaleBuilder Logic
+    ├ù deve renderizar o componente corretamente (65 ms)
+
+  ÔùÅ DailyScaleBuilder Logic ÔÇ║ deve renderizar o componente 
+corretamente
+
+    ReferenceError: Users is not defined
+
+    [0m [90m 428 |[39m             [33m<[39m[33mdiv[39m 
+className[33m=[39m[32m"flex items-center justify-between 
+border-l-4 border-primary pl-4 py-1"[39m[33m>[39m
+     [90m 429 |[39m               [33m<[39m[33mdiv[39m 
+className[33m=[39m[32m"flex items-center 
+gap-3"[39m[33m>[39m
+    [31m[1m>[22m[39m[90m 430 |[39m                 
+[33m<[39m[33mUsers[39m size[33m=[39m{[35m16[39m} 
+className[33m=[39m[32m"text-primary"[39m 
+[33m/[39m[33m>[39m
+     [90m     |[39m                  [31m[1m^[22m[39m
+     [90m 431 |[39m                 [33m<[39m[33mh3[39m 
+className[33m=[39m[32m"font-black uppercase tracking-[0.2em] 
+text-[10px] text-primary"[39m[33m>[39m[33mEquipes[39m 
+[35m24[39m[33mH[39m [33m/[39m 
+[33mApoio[39m[33m<[39m[33m/[39m[33mh3[39m[33m>[39m
+     [90m 432 |[39m               
+[33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+     [90m 433 |[39m               [33m<[39m[33mbutton[39m 
+onClick[33m=[39m{() [33m=>[39m addVtr([32m"TITULAR"[39m)} 
+className[33m=[39m[32m"flex items-center gap-2 px-4 py-2 
+bg-white/5 hover:bg-primary/20 text-white/40 hover:text-primary 
+rounded-xl border border-white/5 transition-all text-[9px] 
+font-black uppercase"[39m[33m>[39m[0m
+
+      at Users (components/DailyScaleBuilder.tsx:430:18)
+      at renderWithHooks 
+(node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+      at mountIndeterminateComponent 
+(node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+      at beginWork 
+(node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+      at beginWork$1 
+(node_modules/react-dom/cjs/react-dom.development.js:27465:14)
+      at performUnitOfWork 
+(node_modules/react-dom/cjs/react-dom.development.js:26599:12)
+      at workLoopSync 
+(node_modules/react-dom/cjs/react-dom.development.js:26505:5)
+      at renderRootSync 
+(node_modules/react-dom/cjs/react-dom.development.js:26473:7)
+      at recoverFromConcurrentError 
+(node_modules/react-dom/cjs/react-dom.development.js:25889:20)
+      at performConcurrentWorkOnRoot 
+(node_modules/react-dom/cjs/react-dom.development.js:25789:22)
+      at flushActQueue 
+(node_modules/react/cjs/react.development.js:2667:24)
+      at act 
+(node_modules/react/cjs/react.development.js:2582:11)
+      at 
+node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot 
+(node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render 
+(node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> 
+(__tests__/DailyScaleBuilder.test.tsx:26:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        1.244 s
+Ran all test suites.

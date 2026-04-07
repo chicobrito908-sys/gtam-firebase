@@ -45,3 +45,5 @@ next-env.d.ts
 build_error.txt
 build_error_utf8.txt
 files_to_push.txt
+test_output.txt
+test_output_utf8.txt

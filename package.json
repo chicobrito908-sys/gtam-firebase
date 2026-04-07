@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --watchAll=false",
+    "test:watch": "jest --watch",
+    "blindagem": "powershell -ExecutionPolicy Bypass -File ./bin/test_and_log.ps1",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
-    "firebase": "^11.6.1",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.45.4",
+    "firebase": "^11.6.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.469.0",
     "next": "14.2.23",
@@ -21,11 +26,17 @@
     "recharts": "^2.12.7"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cypress": "^15.13.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.23",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

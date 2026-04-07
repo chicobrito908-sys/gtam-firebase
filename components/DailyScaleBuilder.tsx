@@ -1,321 +1,92 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-  Shield, 
-  UserPlus, 
-  Trash2, 
-  Save, 
-  Share2, 
-  TrendingDown,
-  AlertTriangle,
-  Zap,
-  Calendar
-} from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import React from "react";
+import { Share2, UserPlus, Info } from "lucide-react";
+import { useScaleBuilder } from "@/hooks/useScaleBuilder";
+import { Agent, ScaleEntry, VTR, AptitudeResult } from "@/types/agent";
+import ScaleHeader from "./ScaleBuilder/ScaleHeader";
+import TacBoard from "./ScaleBuilder/TacBoard";
+import VtrCard from "./ScaleBuilder/VtrCard";
+import AgentSelector from "./ScaleBuilder/AgentSelector";
+import Button from "./ui/Button";
 
-const formatLocalDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+const TURNOS = [
+  { id: "MANHÃ", label: "Turno Manhã (06h - 18h)" },
+  { id: "NOITE", label: "Turno Noite (18h - 06h)" },
+  { id: "ESPECIAL", label: "Operação Especial" },
+];
 
-interface Agent {
-  id: string;
-  nome_guerra: string;
-  posto_grad: string;
-  matricula: string;
-  antiguidade: number;
-  servicos_04_count: number;
-}
-
-interface ScaleEntry {
-  agentId: string;
-  funcao: string; // 01, 02, 03, 04
-  prefixo: string; // GTAM 01, GTAM 02, GTAM 03
-}
+const SUB_TURNOS = [
+  { id: "BI", label: "Turno I" },
+  { id: "BII", label: "Turno II" },
+  { id: "TITULAR", label: "Escala 24h / Apoio" },
+];
 
 export default function DailyScaleBuilder() {
-  const [date, setDate] = useState(formatLocalDate(new Date()));
-  const [efetivo, setEfetivo] = useState<Agent[]>([]);
-  const [selectedAgents, setSelectedAgents] = useState<ScaleEntry[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [turno, setTurno] = useState("24x72");
-
-  // Load Efetivo
-  useEffect(() => {
-    async function loadEfetivo() {
-      const { data } = await supabase
-        .from("efetivo")
-        .select("*")
-        .eq("status", "ATIVO")
-        .order("antiguidade", { ascending: true });
-      
-      setEfetivo(data || []);
-    }
-    loadEfetivo();
-  }, []);
-
-  const addToScale = (agentId: string, prefixo: string, funcao: string) => {
-    if (selectedAgents.some(a => a.agentId === agentId)) return;
-    setSelectedAgents(prev => [...prev, { agentId, prefixo, funcao }]);
-  };
-
-  const removeFromScale = (agentId: string) => {
-    setSelectedAgents(prev => prev.filter(a => a.agentId !== agentId));
-  };
-
-  const handleSave = async () => {
-    if (selectedAgents.length === 0) {
-      alert("Selecione ao menos um policial para a escala.");
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      // 1. Limpar escalas anteriores deste dia/turno
-      await supabase
-        .from("escalas")
-        .delete()
-        .eq("data", date)
-        .eq("turno", turno);
-
-      // 2. Formatar dados
-      const entries = selectedAgents.map(entry => ({
-        data: date,
-        turno: turno,
-        efetivo_id: entry.agentId,
-        equipe: entry.prefixo,
-        funcao: entry.funcao,
-        status: "CONFIRMADO"
-      }));
-
-      // 3. Inserir
-      const { error } = await supabase.from("escalas").insert(entries);
-      if (error) throw error;
-      
-      // 4. Contador de 04
-      const fourthAgents = selectedAgents.filter(a => a.funcao === "04");
-      for (const f of fourthAgents) {
-        const agent = getAgentById(f.agentId);
-        if (agent) {
-           await supabase
-            .from("efetivo")
-            .update({ servicos_04_count: (agent.servicos_04_count || 0) + 1 })
-            .eq("id", f.agentId);
-        }
-      }
-
-      alert("🛡️ Escala Salva com Sucesso!");
-    } catch (err) {
-      console.error(err);
-      alert("❌ Erro ao salvar escala.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleShare = () => {
-    if (selectedAgents.length === 0) {
-      alert("Monte a escala antes de publicar.");
-      return;
-    }
-    
-    let text = `*🛡️ ESCALA OPERACIONAL GTAM - ${new Date(date).toLocaleDateString('pt-BR')}*\n`;
-    text += `*🕒 TURNO:* ${turno.toUpperCase()}\n\n`;
-
-    const teams = ["GTAM 01", "GTAM 02", "GTAM 03"];
-    teams.forEach(team => {
-      const teamAgents = selectedAgents.filter(a => a.prefixo === team);
-      if (teamAgents.length > 0) {
-        text += `🏍️ *${team}*\n`;
-        teamAgents.forEach(entry => {
-          const ag = getAgentById(entry.agentId);
-          if (ag) {
-            text += `• ${entry.funcao}: ${ag.posto_grad} ${ag.nome_guerra}\n`;
-          }
-        });
-        text += `\n`;
-      }
-    });
-
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  };
-
-  const getAgentById = (id: string) => efetivo.find(a => a.id === id);
-
-  const renderMotoSlot = (prefixo: string, funcao: string, label: string) => {
-    const entry = selectedAgents.find(a => a.prefixo === prefixo && a.funcao === funcao);
-    const agent = entry ? getAgentById(entry.agentId) : null;
-
-    return (
-      <div className={`p-4 rounded-2xl border min-h-[100px] flex flex-col justify-center transition-all ${
-        agent 
-        ? 'bg-primary/10 border-primary/30 shadow-lg shadow-black/20' 
-        : 'bg-black/20 border-white/5 border-dashed hover:border-white/20'
-      }`}>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{label}</span>
-          {agent && (
-            <button onClick={() => removeFromScale(agent.id)} className="text-muted-foreground hover:text-rose-500 p-1">
-              <Trash2 size={14} />
-            </button>
-          )}
-        </div>
-        
-        {agent ? (
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-black text-white uppercase">{agent.nome_guerra}</span>
-              {funcao === "04" && agent.servicos_04_count > 5 && (
-                 <AlertTriangle size={14} className="text-amber-500 animate-pulse" />
-              )}
-            </div>
-            <p className="text-[10px] font-bold text-primary/70 uppercase tracking-tighter">
-              {agent.posto_grad} • {agent.matricula}
-            </p>
-          </div>
-        ) : (
-          <div className="text-[10px] font-bold text-muted-foreground/20 uppercase text-center py-2">
-            Vago
-          </div>
-        )}
-      </div>
-    );
-  };
+  const s = useScaleBuilder();
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 px-2 overflow-x-hidden">
-      {/* 📋 Disponíveis Lateral */}
-      <div className="xl:col-span-3 space-y-4 order-2 xl:order-1">
-        <div className="bg-card border border-white/5 rounded-3xl p-6 shadow-2xl">
-          <h3 className="text-sm font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-            <UserPlus size={18} className="text-primary" />
-            Integrantes
-          </h3>
-          
-          <div className="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
-            {efetivo.map((agent) => {
-              const isUsed = selectedAgents.some(a => a.agentId === agent.id);
-              return (
-                <div 
-                  key={agent.id}
-                  className={`p-3 rounded-xl border transition-all flex flex-col gap-1 group relative ${
-                    isUsed 
-                    ? 'opacity-30 pointer-events-none border-transparent bg-white/5' 
-                    : 'bg-white/[0.02] border-white/5 hover:border-primary/40 cursor-default shadow-lg shadow-black/10'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-white group-hover:text-primary transition-colors uppercase">{agent.nome_guerra}</span>
-                    <span className="text-[9px] font-black text-muted-foreground/40">{agent.posto_grad}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                      <button onClick={() => addToScale(agent.id, "GTAM 01", "01")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">01</button>
-                      <button onClick={() => addToScale(agent.id, "GTAM 02", "02")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">02</button>
-                      <button onClick={() => addToScale(agent.id, "GTAM 03", "03")} className="bg-primary/20 hover:bg-primary text-[9px] font-black p-1.5 rounded-lg text-primary hover:text-white transition-all shadow-lg active:scale-90">03</button>
-                      <button onClick={() => addToScale(agent.id, "GTAM 03", "04")} className="bg-rose-600/20 hover:bg-rose-600 text-[9px] font-black p-1.5 rounded-lg text-rose-400 hover:text-white transition-all shadow-lg active:scale-90">04</button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#0d1117] p-4 md:p-8 text-white relative">
+      <div className="max-w-[1400px] mx-auto space-y-12">
+        <ScaleHeader 
+          date={s.date} setDate={s.setDate} turno={s.turno} setTurno={s.setTurno}
+          isFetching={s.isFetching} availableCount={s.efetivo.length}
+          onSave={s.handleSave} isLoading={s.isLoading} turnOptions={TURNOS}
+        />
 
-      {/* 🏍️ Workspace de Montagem */}
-      <div className="xl:col-span-9 space-y-6 order-1 xl:order-2">
-        <div className="bg-card border border-white/5 rounded-[40px] p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
-          <div className="absolute -top-20 -right-20 p-20 opacity-[0.02] rotate-12 pointer-events-none">
-            <Shield size={400} />
-          </div>
+        <TacBoard 
+          missoes={s.missoes} 
+          onAdd={(tipo) => s.setMissoes([...s.missoes, { tipo, descricao: "Clique para editar..." }])}
+          onRemove={(idx) => s.setMissoes(s.missoes.filter((_, i) => i !== idx))}
+        />
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                  <input 
-                    type="date" 
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="bg-transparent border-none text-3xl font-black text-white p-0 focus:ring-0 outline-none w-fit uppercase cursor-pointer hover:text-primary transition-colors"
+        <div className="space-y-10">
+          {SUB_TURNOS.map((sub) => (
+            <div key={sub.id} className="space-y-6">
+              <div className="flex items-center justify-between border-l-4 border-[#7c3aed] pl-4">
+                <h3 className="font-black uppercase tracking-[0.2em] text-[10px] text-[#7c3aed]">{sub.label}</h3>
+                <Button variant="ghost" size="sm" onClick={() => s.handleAddVtr(sub.id)}>
+                   <UserPlus size={14} className="mr-2" /> Adicionar Equipe
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(s.vtrsMap[sub.id] || []).map(v => (
+                  <VtrCard 
+                    key={v.id} vtr={v} 
+                    agents={s.selectedAgents.filter(a => a.equipe === v.id && a.funcao === sub.id)}
+                    getAgentById={(id) => s.efetivo.find(a => a.id === id)}
+                    getAgentAptitude={s.getAptitude}
+                    onRename={(name) => s.handleRenameVtr(sub.id, v.id, name)}
+                    onToggleType={() => s.handleToggleVtrType(sub.id, v.id)}
+                    onRemoveVtr={() => s.handleRemoveVtr(sub.id, v.id)}
+                    onRemoveAgent={(id) => s.setSelectedAgents(prev => prev.filter(a => a.agentId !== id))}
+                    onSelectAgent={() => s.setSelectingFor({ equipe: v.id, funcao: sub.id })}
+                    isSelecting={s.selectingFor?.equipe === v.id && s.selectingFor?.funcao === sub.id}
                   />
-                  <Calendar className="absolute -right-8 top-1 text-primary pointer-events-none" size={20} />
-                </div>
-                <div className="h-10 w-px bg-white/10 hidden md:block" />
-                <div>
-                  <p className="text-xs font-black text-primary uppercase tracking-[0.3em] mt-1 flex items-center gap-2">
-                     <div className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" />
-                     Montagem Operacional GTAM
-                  </p>
-                </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <select 
-                value={turno}
-                onChange={(e) => setTurno(e.target.value)}
-                className="bg-slate-800 border border-white/10 rounded-2xl px-6 py-4 text-sm font-black text-white outline-none focus:ring-2 focus:ring-primary/30 transition-all uppercase appearance-none cursor-pointer"
-              >
-                <option value="24x72">24x72</option>
-                <option value="Manhã">07h-19h</option>
-                <option value="Tarde">19h-07h</option>
-              </select>
-              <button 
-                onClick={handleSave}
-                disabled={loading}
-                className="flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-10 py-4 rounded-2xl font-black transition-all shadow-2xl shadow-primary/20 active:scale-95 text-xs uppercase tracking-[0.2em]"
-              >
-                {loading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Save size={18} />}
-                Salvar
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 mb-12">
-            <div className="space-y-5 bg-white/[0.02] p-6 rounded-[32px] border border-white/5">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">01</div>
-                <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 01</h4>
-              </div>
-              {renderMotoSlot("GTAM 01", "01", "Piloto 01")}
-            </div>
-
-            <div className="space-y-5 bg-white/[0.02] p-6 rounded-[32px] border border-white/5">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">02</div>
-                <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 02</h4>
-              </div>
-              {renderMotoSlot("GTAM 02", "02", "Piloto 02")}
-            </div>
-
-            <div className="space-y-5 bg-primary/[0.03] p-6 rounded-[32px] border border-primary/10">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-lg">03</div>
-                <h4 className="font-black uppercase tracking-tighter text-xl text-white">GTAM 03</h4>
-              </div>
-              <div className="space-y-3">
-                {renderMotoSlot("GTAM 03", "03", "Piloto 03")}
-                {renderMotoSlot("GTAM 03", "04", "Garupa (04)")}
+                ))}
               </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          <div className="pt-8 border-t border-white/5 flex justify-end relative z-10">
-             <button 
-                onClick={handleShare}
-                className="flex items-center gap-4 bg-white/5 hover:bg-white/10 text-white px-10 py-5 rounded-2xl font-black transition-all border border-white/10 shadow-2xl text-[10px] uppercase tracking-[0.3em] group"
-              >
-                <Share2 size={18} className="text-primary group-hover:scale-110 transition-transform" /> 
-                <span>Publicar WhatsApp</span>
-             </button>
-          </div>
+        <div className="pt-8 border-t border-white/5 flex justify-end">
+          <Button onClick={s.handleShare} variant="success" size="lg" className="px-12">
+            <Share2 size={18} className="mr-3" /> Publicar WhatsApp
+          </Button>
         </div>
       </div>
+
+      {s.selectingFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md relative">
+            <AgentSelector 
+              agents={s.efetivo} getAptitude={s.getAptitude} 
+              onSelect={s.handleSelectAgent} onClose={() => s.setSelectingFor(null)} 
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

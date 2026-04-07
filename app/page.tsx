@@ -142,10 +142,13 @@ function formatDateRange(start?: string, end?: string) {
 }
 
 function normalizeTurno(turno?: string) {
-  const value = String(turno || "").toUpperCase();
-  if (value.includes("24") || value.includes("SERV")) return "24x72";
-  if (value.includes("MANH") || value === "A" || value === "A II" || value.includes("ALFA")) return "MANHA";
-  return "TARDE";
+  const value = String(turno || "").toUpperCase().trim();
+  
+  if (value.includes("MANH") || value.includes("TURNO I") || value === "A" || value.includes("A II")) return "MANHA";
+  if (value.includes("TARD") || value.includes("TURNO II") || value.includes("B II") || value === "B") return "TARDE";
+  if (value.includes("24") || value.includes("SERV") || value.includes("ALFA") || value.includes("BETA")) return "24x72";
+  
+  return "TARDE"; // Default
 }
 
 function formatTurnoLabel(turno: string) {
@@ -160,10 +163,17 @@ function formatTurnoLabel(turno: string) {
 }
 
 function normalizeScaleGroup(agent: Efetivo) {
-  const escala = String(agent.tipo_escala || "").toUpperCase();
-  if (escala.includes("24")) return "24x72";
-  const grupo = String(agent.grupo_turno || "").toUpperCase();
-  if (grupo.includes("MANH") || grupo === "A" || grupo === "A II" || grupo.includes("ALFA")) return "MANHA";
+  const escala = String(agent.tipo_escala || "").toUpperCase().trim();
+  const grupo = String(agent.grupo_turno || "").toUpperCase().trim();
+
+  // Prioridade 1: Escalas de 24h (independente do grupo_turno)
+  if (escala.includes("24") || escala.includes("SERV")) return "24x72";
+  
+  // Prioridade 2: IDs operacionais oficiais (A II e B II) para 2x2
+  if (grupo.includes("A II") || grupo.includes("TURNO I") || grupo.includes("MANH") || grupo === "A") return "MANHA";
+  if (grupo.includes("B II") || grupo.includes("TURNO II") || grupo.includes("TARD") || grupo === "B") return "TARDE";
+  
+  // Default para 2x2 sem grupo definido
   return "TARDE";
 }
 
@@ -186,16 +196,26 @@ function buildForceCards(
   feriasAtivas: Ferias[]
 ): ForceCard[] {
   const activeAgents = efetivo.filter(isActiveAgent);
+  
+  // Condições que impedem o serviço (conforme DailyScaleBuilder)
+  const IMPEDITIVE_TYPES = [
+    'ATESTADO', 'FERIAS', 'LICENCA', 'LICENÇA', 'L.P', 'LICENÇA PRÊMIO', 
+    'F.A', 'FOLGA AGENDADA', 'DOAÇÃO', 'AMSEC', 'R.P', 'REDUÇÃO'
+  ];
+
   const blockedIds = new Set([
-    ...afastamentosAtivos.map((item) => String(item.efetivo_id)),
+    ...afastamentosAtivos
+      .filter(a => IMPEDITIVE_TYPES.some(type => a.tipo.toUpperCase().includes(type)))
+      .map((item) => String(item.efetivo_id)),
     ...feriasAtivas.map((item) => String(item.efetivo_id)),
   ]);
+
   const onDutyIds = new Set(escalasHoje.map((item) => String(item.efetivo_id)));
 
   const groups = [
     {
       key: "24x72",
-      title: "Servico 24x72",
+      title: "Serviço 24x72",
       subtitle: "Escala de 24 horas",
       icon: Shield,
       iconColor: "text-primary",
@@ -204,8 +224,8 @@ function buildForceCards(
     },
     {
       key: "MANHA",
-      title: "Turno Manha",
-      subtitle: "Escala 2x2 - Manha",
+      title: "Turno Manhã",
+      subtitle: "Escala 2x2 - Manhã",
       icon: Sun,
       iconColor: "text-amber-400",
       panelTint: "bg-amber-500/10",
@@ -387,11 +407,13 @@ export default function Home() {
 
   const groupedEscalas = groupEscalas(data?.escalaHoje || []);
   const dateLabel = data
-    ? new Date(`${data.hoje}T12:00:00`).toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      })
+    ? (() => {
+        const [y, m, d] = data.hoje.split("-").map(Number);
+        const dateObj = new Date(y, m - 1, d, 12, 0, 0); // Vacina do Meio-Dia
+        const weekdays = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+        return `${weekdays[dateObj.getDay()]}, ${d} de ${months[m - 1]}`;
+      })()
     : "";
 
   return (
@@ -465,34 +487,42 @@ export default function Home() {
             {Array.from(groupedEscalas.entries()).map(([turno, equipes]) => (
               <div key={turno} className="space-y-3">
                 <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-[#8fa6d8]">{formatTurnoLabel(turno)}</h3>
-                {Array.from(equipes.entries()).map(([equipe, items]) => (
-                  <div key={equipe} className="rounded-[14px] bg-[#11192b] p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <p className="text-sm font-bold text-white">{equipe}</p>
-                      <span className="rounded-md bg-white/5 px-3 py-1 text-[11px] font-semibold text-[#c4d2ee]">
-                        {items.length} escalado{items.length > 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#0d1117] px-3 py-3 border border-white/5">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-[10px] font-black text-primary">
-                              {avatarText(item.efetivo?.nome_guerra)}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-bold text-white">{item.efetivo?.nome_guerra || "Sem nome"}</p>
-                              <p className="truncate text-xs text-[#8ea2cc]">{item.efetivo?.matricula || "-"}</p>
-                            </div>
-                          </div>
-                          <span className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-[#c4d2ee]">
-                            {item.funcao || "Servidor"}
-                          </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {Array.from(equipes.entries()).map(([equipe, items]) => (
+                    <div key={equipe} className="rounded-[18px] border border-white/5 bg-[#11192b] p-5 shadow-2xl flex flex-col h-full hover:border-primary/20 transition-all">
+                      <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-2 w-2 rounded-full bg-primary" />
+                          <p className="text-[14px] font-black text-white leading-none uppercase">{equipe}</p>
                         </div>
-                      ))}
+                        <span className="rounded-md bg-primary/10 px-2 py-1 text-[10px] font-black text-primary uppercase">
+                          {items.length} PX
+                        </span>
+                      </div>
+                      <div className="space-y-2 flex-grow">
+                        {items.map((item) => (
+                          <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#0d1117] px-3 py-3 border border-white/5">
+                            <div className="flex min-w-0 items-center gap-3">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 text-[9px] font-black text-primary">
+                                {avatarText(item.efetivo?.nome_guerra)}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-black text-white uppercase leading-tight">
+                                  <span className="text-primary/70 mr-1">{item.efetivo?.posto_grad}</span>
+                                  {item.efetivo?.nome_guerra || "Sem nome"}
+                                </p>
+                                <p className="truncate text-[9px] font-bold text-[#8ea2cc] tracking-widest opacity-40 uppercase">{item.efetivo?.matricula || "-"}</p>
+                              </div>
+                            </div>
+                            <span className="rounded-md bg-white/5 px-2 py-1 text-[9px] font-black text-[#c4d2ee] uppercase">
+                              {item.funcao || "SERV"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ))}
           </div>
