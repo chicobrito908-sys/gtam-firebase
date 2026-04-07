@@ -1,11 +1,13 @@
 export interface Agent {
   id: string;
+  nome_completo?: string;
   nome_guerra: string;
   posto_grad: string;
   matricula: string;
   antiguidade: number;
   tipo_escala: string;
   grupo_turno: string;
+  status?: string;
 }
 
 export interface ScaleEntry {

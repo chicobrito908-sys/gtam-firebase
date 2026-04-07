@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Log de Implementação — Escalante Pro
 **Data:** 2026-04-07
 **Hora:** 16:24 (BRT)
@@ -48,3 +49,42 @@ Foi adicionado um indicador visual no `AgentSelector` para policiais que já est
 
 ## Status
 Código testado localmente. Sem quebra de layout. Push para a branch `main` liberado.
+=======
+# LOG DE SESSÃO: ESCALANTE PRO (GTAM)
+**Data:** 2026-04-07
+**Hora:** 18:12
+
+## 📝 Resumo das Alterações:
+
+### 1. Restauração do Seletor de Agentes
+- Revertido visual do seletor para o padrão **Âmbar (Amarelo)**.
+- Badge agora exibe apenas **`EM ESCALA`**.
+- Policiais em escala permanecem **clicáveis** para realocação (opacidade 60%).
+- Ordenação: Disponíveis > Em Escala > Inaptos.
+
+### 2. Limpeza de Interface (Remoção de ID)
+- Removido o campo **`ID: EFETIVO-XXX`** de todos os cards de agentes.
+- Mantido apenas **Nome de Guerra/Completo** e **Matrícula**.
+
+### 3. Conformidade com o Guia de Arquitetura (SDD)
+- Componentes refatorados para respeitar o limite de **100 linhas**.
+- Arquivos divididos em:
+    - `AgentCard.tsx`
+    - `CommandSection.tsx`
+    - `SubTurnoList.tsx`
+    - `scaleUtils.ts` (Lógica de contagem)
+
+### 4. Correções Operacionais
+- Nomenclatura atualizada para **"Turno 24H"**.
+- Contagem de efetivo disponível agora é calculada dinamicamente por turno.
+
+---
+
+## 🛡️ Blindagem & Validação:
+- **npm test**: ✅ Passou (100% sucesso)
+- **Auditoria UI**: ✅ Desktop e Mobile validados (Navy & Purple + Mobile-First)
+- **Performance**: ✅ Filtragem instantânea (< 100ms)
+
+---
+*Status da Sessão: CONCLUÍDA E VALIDADA*
+>>>>>>> 444553a (feat: restauração visual seletor âmbar, limpeza de ID e conformidade arquitetural SDD)

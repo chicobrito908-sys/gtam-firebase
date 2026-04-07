@@ -16,6 +16,7 @@ export function useScaleBuilder(initialDate?: string) {
   const [vtrsMap, setVtrsMap] = useState<Record<string, VTR[]>>({ BI: [], BII: [], TITULAR: [] });
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [allDayScales, setAllDayScales] = useState<any[]>([]);
   const [selectingFor, setSelectingFor] = useState<{ equipe: string; funcao: string } | null>(null);
 
   // Carregar dados iniciais
@@ -24,10 +25,15 @@ export function useScaleBuilder(initialDate?: string) {
     try {
       const { data: ef } = await supabase.from("efetivo").select("*");
       const { data: aus } = await supabase.from("ausencias").select("*");
-      const { data: sc } = await supabase.from("escalas").select("*").eq("data", date).eq("turno", turno).single();
+      const { data: dayScales } = await supabase.from("escalas").select("*").eq("data", date);
 
       if (ef) setEfetivo(ef);
       if (aus) setAusencias(aus);
+      
+      const scales = dayScales || [];
+      setAllDayScales(scales);
+
+      const sc = scales.find((s: any) => s.turno === turno);
       if (sc) {
         setSelectedAgents(sc.agentes || []);
         setMissoes(sc.missoes || []);
@@ -89,7 +95,7 @@ export function useScaleBuilder(initialDate?: string) {
     setSelectingFor(null);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (onSuccess?: () => void) => {
     setIsLoading(true);
     const { error } = await supabase.from("escalas").upsert([{
       data: date,
@@ -99,7 +105,10 @@ export function useScaleBuilder(initialDate?: string) {
       vtrsMap
     }], { onConflict: "data,turno" });
     setIsLoading(false);
-    if (!error) window.location.href = '/escalas';
+    if (!error) {
+      if (onSuccess) onSuccess();
+      else window.location.href = '/escalas';
+    }
   };
 
   const handleShare = () => {
@@ -109,7 +118,7 @@ export function useScaleBuilder(initialDate?: string) {
 
   return {
     date, setDate, turno, setTurno, efetivo, ausencias, selectedAgents, missoes, setMissoes,
-    vtrsMap, isLoading, isFetching, selectingFor, setSelectingFor,
+    vtrsMap, isLoading, isFetching, allDayScales, selectingFor, setSelectingFor,
     getAptitude, handleAddVtr, handleRenameVtr, handleToggleVtrType, handleRemoveVtr,
     handleRemoveAgent, handleSelectAgent, handleSave, handleShare
   };

@@ -1,36 +1,37 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, UserPlus } from "lucide-react";
+import { Search } from "lucide-react";
 import { Agent, AptitudeResult } from "@/types/agent";
+import AgentCard from "./AgentCard";
 
-interface AgentSelectorProps {
+interface Props {
   agents: Agent[];
   getAptitude: (id: string) => AptitudeResult;
   onSelect: (agentId: string) => void;
   onClose: () => void;
   selectedAgentIds?: string[];
+  alreadyInOtherTurnoIds?: string[];
 }
 
 export default function AgentSelector({
-  agents,
-  getAptitude,
-  onSelect,
-  onClose,
-  selectedAgentIds = [],
-}: AgentSelectorProps) {
+  agents, getAptitude, onSelect, onClose,
+  selectedAgentIds = [], alreadyInOtherTurnoIds = [],
+}: Props) {
   const [filter, setFilter] = useState("");
 
   const filtered = agents
-    .filter((a) => a.nome_guerra.toLowerCase().includes(filter.toLowerCase()))
+    .filter((a) =>
+      a.nome_completo?.toLowerCase().includes(filter.toLowerCase()) ||
+      a.matricula?.includes(filter) ||
+      a.nome_guerra?.toLowerCase().includes(filter.toLowerCase())
+    )
     .sort((a, b) => {
       const aptA = getAptitude(a.id).severity === 'error' ? 2 : 0;
       const aptB = getAptitude(b.id).severity === 'error' ? 2 : 0;
-      const scaledA = selectedAgentIds.includes(a.id) ? 1 : 0;
-      const scaledB = selectedAgentIds.includes(b.id) ? 1 : 0;
-      const priorityA = aptA + scaledA;
-      const priorityB = aptB + scaledB;
-      if (priorityA !== priorityB) return priorityA - priorityB;
+      const scaledA = (selectedAgentIds.includes(a.id) || alreadyInOtherTurnoIds.includes(a.id)) ? 1 : 0;
+      const scaledB = (selectedAgentIds.includes(b.id) || alreadyInOtherTurnoIds.includes(b.id)) ? 1 : 0;
+      if ((aptA + scaledA) !== (aptB + scaledB)) return (aptA + scaledA) - (aptB + scaledB);
       return (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999);
     });
 
@@ -39,72 +40,26 @@ export default function AgentSelector({
       <div className="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl mb-4">
         <Search size={14} className="text-[#7c3aed]" />
         <input
-          autoFocus
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          autoFocus value={filter} onChange={(e) => setFilter(e.target.value)}
           placeholder="PESQUISAR POLICIAL..."
           className="bg-transparent border-none text-[10px] font-black text-white outline-none w-full placeholder:text-white/10 uppercase tracking-widest"
         />
       </div>
 
       <div className="max-h-[300px] overflow-y-auto space-y-1 custom-scrollbar pr-2">
-        {filtered.map((ag) => {
-          const aptitude = getAptitude(ag.id);
-          const isError = aptitude.severity === "error";
-          const isScaled = selectedAgentIds.includes(ag.id);
-
-          return (
-            <button
-              key={ag.id}
-              disabled={isError}
-              onClick={() => onSelect(ag.id)}
-              className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
-                isError
-                  ? "opacity-20 cursor-not-allowed bg-rose-500/5"
-                  : isScaled
-                  ? "opacity-40 hover:opacity-70 group"
-                  : "hover:bg-white/5 group"
-              }`}
-            >
-              <div className="flex flex-col items-start min-w-0">
-                <span className="text-[10px] font-black uppercase text-white group-hover:text-[#7c3aed] transition-colors truncate">
-                  {ag.nome_guerra}
-                </span>
-                <span className="text-[9px] font-bold text-white/30 uppercase truncate">
-                  {ag.antiguidade ? `${ag.antiguidade}º` : ''} · Mat. {ag.matricula}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {isScaled && (
-                  <span className="text-[8px] font-black uppercase tracking-tighter text-amber-400 border border-amber-400/30 rounded px-1 py-0.5">
-                    Em escala
-                  </span>
-                )}
-                {aptitude.label && (
-                  <span className={`text-[8px] font-black uppercase tracking-tighter ${
-                    aptitude.severity === 'warning' ? 'text-amber-500' : 'text-rose-500'
-                  }`}>
-                    {aptitude.label}
-                  </span>
-                )}
-              </div>
-            </button>
-          );
-        })}
-        
-        {filtered.length === 0 && (
-          <div className="py-8 text-center opacity-20 italic text-[10px]">
-            Nenhum resultado encontrado
-          </div>
-        )}
+        {filtered.map((ag) => (
+          <AgentCard
+            key={ag.id} agent={ag} 
+            aptitude={getAptitude(ag.id)}
+            isScaled={selectedAgentIds.includes(ag.id) || alreadyInOtherTurnoIds.includes(ag.id)}
+            onSelect={onSelect}
+          />
+        ))}
+        {filtered.length === 0 && <div className="py-8 text-center opacity-20 italic text-[10px]">Nenhum resultado encontrado</div>}
       </div>
 
       <div className="mt-4 pt-3 border-t border-white/5 flex justify-end">
-        <button 
-          onClick={onClose}
-          className="text-[9px] font-black text-white/20 hover:text-white uppercase tracking-widest transition-colors"
-        >
+        <button onClick={onClose} className="text-[9px] font-black text-white/20 hover:text-white uppercase tracking-widest transition-colors">
           Fechar
         </button>
       </div>
