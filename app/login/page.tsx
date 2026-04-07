@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Lock, Eye } from "lucide-react";
+import { Lock, Eye } from "lucide-react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 
@@ -53,12 +54,18 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
           {/* Top Banner */}
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 mb-6 shadow-xl">
-              <Shield className="text-white" size={32} strokeWidth={2.5} />
+          <div className="bg-gradient-to-br from-[#0d1117] to-[#1a1040] p-10 flex flex-col items-center text-center border-b border-white/5">
+            <div className="relative w-28 h-28 mb-6 drop-shadow-2xl">
+              <Image
+                src="/logo-gtam.png"
+                alt="Logo GTAM"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Escalante Pro</h1>
-            <p className="text-blue-100/60 text-xs font-bold uppercase tracking-[0.2em] mt-2">GMF • Intranet Operacional</p>
+            <p className="text-white/30 text-xs font-bold uppercase tracking-[0.2em] mt-2">GMF • Intranet Operacional</p>
           </div>
 
           <div className="p-10 space-y-8">
