@@ -19,6 +19,7 @@ export default function AgentCard({
 }: AgentCardProps) {
   if (!agent) return null;
 
+
   const isError = aptitude.severity === 'error';
   const isWarning = aptitude.severity === 'warning';
   
@@ -41,7 +42,7 @@ export default function AgentCard({
           {isError && <Shield size={10} className="text-rose-500 shake" />}
           {isWarning && <Zap size={10} className="text-amber-500" />}
           <span className={`${size === 'sm' ? 'text-[9px]' : 'text-xs'} font-black uppercase truncate ${statusColor}`}>
-            {agent.nome_guerra.replace(/^(SI|GD|GM|GC|CD|IR|Insp|SubInsp)\s+/i, '').trim()}
+            {agent.nome_guerra}
             {aptitude.label && (
               <span className="ml-2 opacity-60 text-[8px] font-bold">
                 ({aptitude.label})
@@ -50,13 +51,13 @@ export default function AgentCard({
           </span>
         </div>
         <span className="text-[9px] font-bold text-white/30 uppercase truncate">
-          Mat. {agent.matricula}
+          {agent.antiguidade ? `${agent.antiguidade}º` : ''} · Mat. {agent.matricula}
         </span>
       </div>
       
       <button 
         onClick={onRemove} 
-        className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100 shrink-0"
+        className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all opacity-30 group-hover:opacity-100 shrink-0"
       >
         <Trash2 size={size === 'sm' ? 14 : 16} />
       </button>

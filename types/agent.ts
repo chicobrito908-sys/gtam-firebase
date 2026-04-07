@@ -20,7 +20,7 @@ export interface VTR {
 }
 
 export interface AptitudeResult {
-  severity: "none" | "warning" | "error";
-  label?: string;
-  details?: string;
+  severity: "none" | "warning" | "error" | "info";
+  label?: string | null;
+  details?: string | null;
 }

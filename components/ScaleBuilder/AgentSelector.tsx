@@ -21,10 +21,9 @@ export default function AgentSelector({
 
   const filtered = agents
     .filter((a) => {
-      const match = a.nome_guerra.toLowerCase().includes(filter.toLowerCase());
-      return match;
+      return a.nome_guerra.toLowerCase().includes(filter.toLowerCase());
     })
-    .sort((a, b) => a.nome_guerra.localeCompare(b.nome_guerra));
+    .sort((a, b) => (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999));
 
   return (
     <div className="absolute top-full left-0 right-0 z-50 mt-4 bg-[#1a1f26] border border-white/10 rounded-[24px] shadow-2xl p-4 animate-in fade-in zoom-in duration-200">
@@ -57,10 +56,10 @@ export default function AgentSelector({
             >
               <div className="flex flex-col items-start min-w-0">
                 <span className="text-[10px] font-black uppercase text-white group-hover:text-[#7c3aed] transition-colors truncate">
-                  {ag.nome_guerra.replace(/^(SI|GD|GM|GC|CD|IR|Insp|SubInsp)\s+/i, '').trim()}
+                  {ag.nome_guerra}
                 </span>
                 <span className="text-[9px] font-bold text-white/30 uppercase truncate">
-                  Mat. {ag.matricula}
+                  {ag.antiguidade ? `${ag.antiguidade}º` : ''} · Mat. {ag.matricula}
                 </span>
               </div>
               

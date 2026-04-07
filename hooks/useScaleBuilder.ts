@@ -79,6 +79,10 @@ export function useScaleBuilder() {
     setSelectedAgents(prev => prev.filter(a => !(a.equipe === id && a.funcao === sub)));
   };
 
+  const handleRemoveAgent = (agentId: string) => {
+    setSelectedAgents(prev => prev.filter(a => a.agentId !== agentId));
+  };
+
   const handleSelectAgent = (agentId: string) => {
     if (!selectingFor) return;
     setSelectedAgents(prev => [...prev.filter(a => a.agentId !== agentId), { agentId, ...selectingFor }]);
@@ -87,13 +91,13 @@ export function useScaleBuilder() {
 
   const handleSave = async () => {
     setIsLoading(true);
-    await supabase.from("escalas").upsert({
+    await supabase.from("escalas").upsert([{
       data: date,
       turno,
       agentes: selectedAgents,
       missoes,
       vtrsMap
-    });
+    }], { onConflict: "data,turno" });
     setIsLoading(false);
   };
 
@@ -106,6 +110,6 @@ export function useScaleBuilder() {
     date, setDate, turno, setTurno, efetivo, ausencias, selectedAgents, missoes, setMissoes,
     vtrsMap, isLoading, isFetching, selectingFor, setSelectingFor,
     getAptitude, handleAddVtr, handleRenameVtr, handleToggleVtrType, handleRemoveVtr,
-    handleSelectAgent, handleSave, handleShare
+    handleRemoveAgent, handleSelectAgent, handleSave, handleShare
   };
 }

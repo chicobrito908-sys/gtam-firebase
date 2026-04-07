@@ -51,7 +51,7 @@ export default function VtrCard({
         </div>
         <div className="flex items-center gap-2">
            <span className="text-[9px] font-black text-white/10 uppercase">{agents.length} PX</span>
-           <button onClick={onRemoveVtr} className="p-1.5 text-white/5 hover:text-rose-500 opacity-0 group-hover/vtr:opacity-100 transition-all rounded-lg hover:bg-rose-500/10">
+           <button onClick={onRemoveVtr} className="p-1.5 text-rose-500/60 hover:text-rose-500 opacity-20 group-hover/vtr:opacity-100 transition-all rounded-lg hover:bg-rose-500/10">
              <Trash2 size={14} />
            </button>
         </div>

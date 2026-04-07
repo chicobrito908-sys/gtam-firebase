@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Share2, UserPlus, Info } from "lucide-react";
+import React, { useEffect } from "react";
+import { Share2, UserPlus, ChevronLeft, X } from "lucide-react";
 import { useScaleBuilder } from "@/hooks/useScaleBuilder";
 import { Agent, ScaleEntry, VTR, AptitudeResult } from "@/types/agent";
 import ScaleHeader from "./ScaleBuilder/ScaleHeader";
@@ -25,19 +25,36 @@ const SUB_TURNOS = [
 export default function DailyScaleBuilder() {
   const s = useScaleBuilder();
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") s.setSelectingFor(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [s]);
+
   return (
     <div className="min-h-screen bg-[#0d1117] p-4 md:p-8 text-white relative">
       <div className="max-w-[1400px] mx-auto space-y-12">
-        <ScaleHeader 
-          date={s.date} setDate={s.setDate} turno={s.turno} setTurno={s.setTurno}
-          isFetching={s.isFetching} availableCount={s.efetivo.length}
-          onSave={s.handleSave} isLoading={s.isLoading} turnOptions={TURNOS}
-        />
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => window.location.href = '/escalas'}
+            className="p-2 hover:bg-white/5 rounded-full transition-colors text-white/50 hover:text-white"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <ScaleHeader 
+            date={s.date} setDate={s.setDate} turno={s.turno} setTurno={s.setTurno}
+            isFetching={s.isFetching} availableCount={s.efetivo.length}
+            onSave={s.handleSave} isLoading={s.isLoading} turnOptions={TURNOS}
+          />
+        </div>
 
         <TacBoard 
           missoes={s.missoes} 
-          onAdd={(tipo) => s.setMissoes([...s.missoes, { tipo, descricao: "Clique para editar..." }])}
-          onRemove={(idx) => s.setMissoes(s.missoes.filter((_, i) => i !== idx))}
+          onAdd={(tipo) => s.setMissoes(prev => [...prev, { tipo, descricao: "Clique para editar..." }])}
+          onRemove={(idx) => s.setMissoes(prev => prev.filter((_, i) => i !== idx))}
+          onUpdate={(idx, desc) => s.setMissoes(prev => prev.map((m, i) => i === idx ? { ...m, descricao: desc } : m))}
         />
 
         <div className="space-y-10">
@@ -60,7 +77,7 @@ export default function DailyScaleBuilder() {
                     onRename={(name) => s.handleRenameVtr(sub.id, v.id, name)}
                     onToggleType={() => s.handleToggleVtrType(sub.id, v.id)}
                     onRemoveVtr={() => s.handleRemoveVtr(sub.id, v.id)}
-                    onRemoveAgent={(id) => s.setSelectedAgents(prev => prev.filter(a => a.agentId !== id))}
+                    onRemoveAgent={s.handleRemoveAgent}
                     onSelectAgent={() => s.setSelectingFor({ equipe: v.id, funcao: sub.id })}
                     isSelecting={s.selectingFor?.equipe === v.id && s.selectingFor?.funcao === sub.id}
                   />
@@ -78,8 +95,21 @@ export default function DailyScaleBuilder() {
       </div>
 
       {s.selectingFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md relative">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => s.setSelectingFor(null)}
+        >
+          <div 
+            className="w-full max-w-md relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botão X para fechar */}
+            <button
+              onClick={() => s.setSelectingFor(null)}
+              className="absolute -top-3 -right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/10 hover:bg-rose-500/80 rounded-full transition-all text-white"
+            >
+              <X size={14} />
+            </button>
             <AgentSelector 
               agents={s.efetivo} getAptitude={s.getAptitude} 
               onSelect={s.handleSelectAgent} onClose={() => s.setSelectingFor(null)} 

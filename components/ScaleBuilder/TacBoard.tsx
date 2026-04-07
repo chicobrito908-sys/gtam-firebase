@@ -13,9 +13,10 @@ interface TacBoardProps {
   missoes: Mission[];
   onAdd: (tipo: "MISSAO" | "ALERTA") => void;
   onRemove: (index: number) => void;
+  onUpdate: (index: number, newDesc: string) => void;
 }
 
-export default function TacBoard({ missoes, onAdd, onRemove }: TacBoardProps) {
+export default function TacBoard({ missoes, onAdd, onRemove, onUpdate }: TacBoardProps) {
   return (
     <div className="bg-white/[0.02] border border-white/5 rounded-[32px] p-8 space-y-6">
       <div className="flex items-center justify-between border-l-4 border-emerald-500 pl-4 py-1">
@@ -59,12 +60,17 @@ export default function TacBoard({ missoes, onAdd, onRemove }: TacBoardProps) {
               </div>
               <button
                 onClick={() => onRemove(idx)}
-                className="text-rose-500/40 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
+                className="text-rose-500/60 hover:text-rose-500 opacity-40 group-hover:opacity-100 transition-all p-1 hover:bg-rose-500/10 rounded"
               >
                 <Trash2 size={14} />
               </button>
             </div>
-            <p className="text-[11px] font-bold text-white/70 mt-2 leading-relaxed">{m.descricao}</p>
+            <textarea
+              value={m.descricao}
+              onChange={(e) => onUpdate(idx, e.target.value)}
+              className="text-[11px] font-bold text-white/70 mt-2 leading-relaxed bg-transparent border-none w-full min-h-[60px] resize-none focus:text-white focus:bg-white/5 p-1 rounded outline-none"
+              placeholder="Descreva a missão ou alerta..."
+            />
           </div>
         ))}
         
