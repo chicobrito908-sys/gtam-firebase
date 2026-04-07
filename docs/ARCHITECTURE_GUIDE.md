@@ -51,7 +51,11 @@ Este documento define as regras obrigatórias para o desenvolvimento do GTAM, ga
 - **Regra:** Não use classes Tailwind "soltas" para bordas, sombras ou cores de fundo repetitivas. Use os componentes da pasta `components/ui/`.
 
 ### ✨ Animações & Mobile
-- Use sempre `framer-motion` (importado como `motion/react`) para entradas de modais e transições suaves.
+- Use sempre `framer-motion` (importado como `motion/react`).
+- **UI Premium**: Uso obrigatório de *Glassmorphism*, gradientes suaves e sombras profundas.
+- **Scrollbars**: Devem ser customizadas via CSS (`.custom-scrollbar`) para manter a estética Navy/Purple.
+- **Seleção Dinâmica**: Evitar `<select>` nativo para seleções críticas. Utilizar listas buscáveis customizadas para evitar falhas de renderização (bugs de "aba branca").
+- **Responsividade Inversa**: Em dispositivos móveis, a hierarquia de informação deve ser reorganizada (ex: Relatório sobre o Calendário) via Grid/Flex.
 - **Responsividade**: Priorize a visibilidade de informações críticas no topo da tela em dispositivos móveis (Mobile-First).
 
 ---

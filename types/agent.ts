@@ -18,3 +18,9 @@ export interface VTR {
   id: string;
   type: 'MOTO' | 'CARRO';
 }
+
+export interface AptitudeResult {
+  severity: "none" | "warning" | "error";
+  label?: string;
+  details?: string;
+}

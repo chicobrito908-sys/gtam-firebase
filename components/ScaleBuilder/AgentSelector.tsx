@@ -57,10 +57,10 @@ export default function AgentSelector({
             >
               <div className="flex flex-col items-start min-w-0">
                 <span className="text-[10px] font-black uppercase text-white group-hover:text-[#7c3aed] transition-colors truncate">
-                  {ag.nome_guerra}
+                  {ag.nome_guerra.replace(/^(SI|GD|GM|GC|CD|IR|Insp|SubInsp)\s+/i, '').trim()}
                 </span>
-                <span className="text-[8px] font-bold text-white/20 uppercase">
-                  {ag.posto_grad} • {ag.tipo_escala}
+                <span className="text-[9px] font-bold text-white/30 uppercase truncate">
+                  Mat. {ag.matricula}
                 </span>
               </div>
               

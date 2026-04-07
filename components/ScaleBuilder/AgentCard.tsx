@@ -41,7 +41,7 @@ export default function AgentCard({
           {isError && <Shield size={10} className="text-rose-500 shake" />}
           {isWarning && <Zap size={10} className="text-amber-500" />}
           <span className={`${size === 'sm' ? 'text-[9px]' : 'text-xs'} font-black uppercase truncate ${statusColor}`}>
-            {agent.nome_guerra}
+            {agent.nome_guerra.replace(/^(SI|GD|GM|GC|CD|IR|Insp|SubInsp)\s+/i, '').trim()}
             {aptitude.label && (
               <span className="ml-2 opacity-60 text-[8px] font-bold">
                 ({aptitude.label})
@@ -50,7 +50,7 @@ export default function AgentCard({
           </span>
         </div>
         <span className="text-[9px] font-bold text-white/30 uppercase truncate">
-          {agent.posto_grad} • Mat. {agent.matricula}
+          Mat. {agent.matricula}
         </span>
       </div>
       
