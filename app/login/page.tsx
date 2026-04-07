@@ -55,11 +55,12 @@ export default function LoginPage() {
         <div className="bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
           {/* Top Banner */}
           <div className="bg-gradient-to-br from-[#0d1117] to-[#1a1040] p-10 flex flex-col items-center text-center border-b border-white/5">
-            <div className="relative w-28 h-28 mb-6 drop-shadow-2xl">
+            <div className="w-32 h-32 flex items-center justify-center mb-6">
               <Image
                 src="/logo-gtam.png"
                 alt="Logo GTAM"
-                fill
+                width={128}
+                height={128}
                 className="object-contain"
                 priority
               />

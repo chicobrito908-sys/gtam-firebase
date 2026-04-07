@@ -102,12 +102,13 @@ export default function Sidebar() {
       `}>
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative w-12 h-12">
+            <div className="w-12 h-12 flex items-center justify-center shrink-0">
               <Image
                 src="/logo-gtam.png"
                 alt="GTAM Logo"
-                fill
-                className="object-contain"
+                width={48}
+                height={48}
+                className="object-contain w-full h-full"
               />
             </div>
             <div>
