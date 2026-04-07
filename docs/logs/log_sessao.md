@@ -1,27 +1,61 @@
-# Log de Implementação - Modernização Escalas v2
-
-## Resumo das Alterações
-- **Migração para v2**: Interface oficial atualizada para o `ScaleDashboardV2` no caminho `/escalas`.
-- **Limpeza de Nomes (Regex)**: Implementada lógica global para remover prefixos de hierarquia (GM, GD, SI, GC, CD, IR, Insp, SubInsp) em todos os componentes de escala (Card, Selector, Report, Modal).
-- **Tipos de Ausência**: Atualizada a lista oficial para: `F.A`, `R.P`, `M.P`, `ATESTADO`, `DOAÇÃO DE SANGUE`, `LM`, `LIP`, `OUTROS`.
-- **Correção Nutri**: Removida a opção "NUTRI" que era incorreta.
-- **UX Premium**: Design Mobile-First consolidado com sistema de abas e visual Navy/Purple.
-
-## Arquivos Afetados
-- `components/ScaleBuilder/QuickAbsenceModal.tsx`
-- `components/ScaleBuilder/AgentSelector.tsx`
-- `components/ScaleBuilder/AgentCard.tsx`
-- `components/ScaleBuilder/ReportDetailedV2.tsx`
-- `components/ScaleBuilder/ScaleDashboardV2.tsx` (Novo orquestrador)
-- `app/escalas/page.tsx` (Integração final)
-- `app/sandbox/page.tsx` (Sandbox atualizado)
-
-## Verificação
-- Verificado via browser subagent em `/escalas`.
-- Confirmada a limpeza do nome "L MAIA".
-- Confirmada a presença dos novos tipos de registro.
-- Build estável.
+﻿# Log de Sessão — Escalante Pro
+**Data:** 2026-04-07
+**Hora:** 16:00 (BRT)
+**Responsável:** Antigravity (Agente)
 
 ---
-*Data: 07 de Abril de 2026*
-*Status: Migração Concluída*
+
+## Resumo da Sessão
+
+Sessão focada na correção de três bugs críticos no módulo de Escalas do Escalante Pro, seguindo o fluxo SDD (Implementar → Testar → Aprovar → Salvar).
+
+---
+
+## Implementações Realizadas
+
+### 1. Conexão Calendário → Builder (Bug Fix)
+**Arquivo:** `app/escalas/page.tsx`
+- O `selectedDay` do dashboard agora é passado como prop `initialDate` para o `DailyScaleBuilder`
+- Antes: builder sempre abria com a data de hoje, ignorando o dia clicado no calendário
+- Depois: clicar no dia 08 e apertar "MONTAR" abre o builder já com 08/04/2026
+
+### 2. Navegação Pós-Salvamento (Bug Fix)
+**Arquivo:** `hooks/useScaleBuilder.ts`
+- `handleSave` agora retorna `{ error }` do upsert
+- Após salvar sem erro: `window.location.href = '/escalas'` (redireciona ao dashboard)
+- Antes: usuário ficava preso na tela do builder após salvar
+- O hook também aceita `initialDate?: string` como parâmetro
+
+### 3. Seção Cargos de Comando (Nova Funcionalidade)
+**Arquivo:** `components/DailyScaleBuilder.tsx`
+- Adicionada seção "CARGOS DE COMANDO" acima das viaturas
+- Dois cards: "Supervisor do Turno" (roxo) e "Responsável Armaria" (âmbar)
+- Botão "+ Designar" abre o AgentSelector para cada cargo
+- Botão "Remover" para desassociar o designado
+- Integrado com o mesmo sistema de `selectedAgents` e `equipe` do builder
+
+---
+
+## Testes Realizados (Blindagem)
+
+| Teste | Resultado |
+|---|---|
+| Dashboard carrega sem erros | ✅ PASS |
+| Cards GTAM sem duplicatas | ✅ PASS |
+| Calendário → cabeçalho atualiza | ✅ PASS |
+| Calendário → Builder com data certa | ✅ PASS |
+| Seção Cargos de Comando visível | ✅ PASS |
+| Designar Supervisor funciona | ✅ PASS |
+| Salvar → redireciona ao dashboard | ✅ PASS |
+| Logo GTAM na tela de login | ✅ PASS |
+| Logo GTAM na sidebar | ✅ PASS |
+
+---
+
+## Arquivos Modificados
+- `hooks/useScaleBuilder.ts`
+- `components/DailyScaleBuilder.tsx`
+- `app/escalas/page.tsx`
+
+## Status
+Aprovado para push. Aguardando publicação em produção.

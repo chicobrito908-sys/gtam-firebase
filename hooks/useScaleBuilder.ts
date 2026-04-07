@@ -6,8 +6,8 @@ import { Agent, ScaleEntry, VTR, AptitudeResult } from "@/types/agent";
 import { getAgentAptitude } from "@/lib/services/aptitudeService";
 import { generateWhatsAppText } from "@/lib/services/scaleService";
 
-export function useScaleBuilder() {
-  const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
+export function useScaleBuilder(initialDate?: string) {
+  const [date, setDate] = useState<string>(initialDate ?? new Date().toISOString().split("T")[0]);
   const [turno, setTurno] = useState("MANHÃ");
   const [efetivo, setEfetivo] = useState<Agent[]>([]);
   const [ausencias, setAusencias] = useState<any[]>([]);
@@ -91,7 +91,7 @@ export function useScaleBuilder() {
 
   const handleSave = async () => {
     setIsLoading(true);
-    await supabase.from("escalas").upsert([{
+    const { error } = await supabase.from("escalas").upsert([{
       data: date,
       turno,
       agentes: selectedAgents,
@@ -99,6 +99,7 @@ export function useScaleBuilder() {
       vtrsMap
     }], { onConflict: "data,turno" });
     setIsLoading(false);
+    if (!error) window.location.href = '/escalas';
   };
 
   const handleShare = () => {

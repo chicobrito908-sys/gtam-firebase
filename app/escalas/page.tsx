@@ -24,7 +24,7 @@ export default function EscalasPage() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
-  if (s.view === 'builder') return <DailyScaleBuilder />;
+  if (s.view === 'builder') return <DailyScaleBuilder initialDate={s.selectedDay} />;
 
   return (
     <main className="min-h-screen bg-[#0d1117] p-4 lg:p-8 text-white relative">
