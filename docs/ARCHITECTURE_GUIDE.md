@@ -16,6 +16,18 @@ Este documento define as regras obrigatórias para o desenvolvimento do GTAM, ga
 - `components/[Modulo]/`: Componentes específicos de uma funcionalidade (ex: `ScaleBuilder/`).
 - `lib/services/`: Toda a lógica de "cérebro" do app (quem pode ser escalado, cálculos).
 - `lib/hooks/`: Funções que gerenciam o estado do React.
+- `docs/specs/`: Especificações técnicas de cada funcionalidade (SDD).
+- `tmp/sandbox/`: Ambiente de prototipagem rápida e segura.
+
+---
+
+## 2. Metodologia SDD (Spec-Driven Development)
+
+### 📋 Fluxo de Trabalho Obrigatório
+1.  **Spec**: Antes de codificar, uma especificação detalhada deve ser criada em `docs/specs/`.
+2.  **Sandbox**: Protótipos visuais complexos devem ser construídos primeiro em `tmp/sandbox/`.
+3.  **Auditoria**: Um agente de IA deve validar o protótipo no navegador (Mobile/Desktop) antes da integração.
+4.  **Integração**: Somente após aprovação, o código é movido para as pastas definitivas.
 
 ---
 
@@ -38,9 +50,21 @@ Este documento define as regras obrigatórias para o desenvolvimento do GTAM, ga
 - **Principal:** `#7c3aed` (Purple/Vivid)
 - **Regra:** Não use classes Tailwind "soltas" para bordas, sombras ou cores de fundo repetitivas. Use os componentes da pasta `components/ui/`.
 
-### ✨ Animações
+### ✨ Animações & Mobile
 - Use sempre `framer-motion` (importado como `motion/react`) para entradas de modais e transições suaves.
-- Padrão sugerido: `initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}`.
+- **Responsividade**: Priorize a visibilidade de informações críticas no topo da tela em dispositivos móveis (Mobile-First).
+
+---
+
+## 5. Automação de Agentes & Workflows
+
+### 🤖 Agent Manager
+- Use subagentes dedicados para Auditoria de UI e Validação de Segurança.
+- Cada agente deve operar de forma isolada para garantir a qualidade do componente.
+
+### 🔄 Workflows
+- Utilize o comando `/salvar` para garantir a integridade do commit (testes + logs).
+- Utilize o comando `/verificar-ui` para auditoria visual automática.
 
 ---
 
