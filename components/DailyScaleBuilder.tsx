@@ -157,6 +157,7 @@ export default function DailyScaleBuilder({ initialDate }: Props) {
             <AgentSelector
               agents={s.efetivo} getAptitude={s.getAptitude}
               onSelect={s.handleSelectAgent} onClose={() => s.setSelectingFor(null)}
+              selectedAgentIds={s.selectedAgents.map(a => a.agentId)}
             />
           </div>
         </div>

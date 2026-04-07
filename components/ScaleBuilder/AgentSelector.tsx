@@ -9,6 +9,7 @@ interface AgentSelectorProps {
   getAptitude: (id: string) => AptitudeResult;
   onSelect: (agentId: string) => void;
   onClose: () => void;
+  selectedAgentIds?: string[];
 }
 
 export default function AgentSelector({
@@ -16,14 +17,22 @@ export default function AgentSelector({
   getAptitude,
   onSelect,
   onClose,
+  selectedAgentIds = [],
 }: AgentSelectorProps) {
   const [filter, setFilter] = useState("");
 
   const filtered = agents
-    .filter((a) => {
-      return a.nome_guerra.toLowerCase().includes(filter.toLowerCase());
-    })
-    .sort((a, b) => (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999));
+    .filter((a) => a.nome_guerra.toLowerCase().includes(filter.toLowerCase()))
+    .sort((a, b) => {
+      const aptA = getAptitude(a.id).severity === 'error' ? 2 : 0;
+      const aptB = getAptitude(b.id).severity === 'error' ? 2 : 0;
+      const scaledA = selectedAgentIds.includes(a.id) ? 1 : 0;
+      const scaledB = selectedAgentIds.includes(b.id) ? 1 : 0;
+      const priorityA = aptA + scaledA;
+      const priorityB = aptB + scaledB;
+      if (priorityA !== priorityB) return priorityA - priorityB;
+      return (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999);
+    });
 
   return (
     <div className="absolute top-full left-0 right-0 z-50 mt-4 bg-[#1a1f26] border border-white/10 rounded-[24px] shadow-2xl p-4 animate-in fade-in zoom-in duration-200">
@@ -42,6 +51,7 @@ export default function AgentSelector({
         {filtered.map((ag) => {
           const aptitude = getAptitude(ag.id);
           const isError = aptitude.severity === "error";
+          const isScaled = selectedAgentIds.includes(ag.id);
 
           return (
             <button
@@ -51,6 +61,8 @@ export default function AgentSelector({
               className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
                 isError
                   ? "opacity-20 cursor-not-allowed bg-rose-500/5"
+                  : isScaled
+                  ? "opacity-40 hover:opacity-70 group"
                   : "hover:bg-white/5 group"
               }`}
             >
@@ -62,14 +74,21 @@ export default function AgentSelector({
                   {ag.antiguidade ? `${ag.antiguidade}º` : ''} · Mat. {ag.matricula}
                 </span>
               </div>
-              
-              {aptitude.label && (
-                <span className={`text-[8px] font-black uppercase tracking-tighter ${
-                  aptitude.severity === 'warning' ? 'text-amber-500' : 'text-rose-500'
-                }`}>
-                  {aptitude.label}
-                </span>
-              )}
+
+              <div className="flex items-center gap-2">
+                {isScaled && (
+                  <span className="text-[8px] font-black uppercase tracking-tighter text-amber-400 border border-amber-400/30 rounded px-1 py-0.5">
+                    Em escala
+                  </span>
+                )}
+                {aptitude.label && (
+                  <span className={`text-[8px] font-black uppercase tracking-tighter ${
+                    aptitude.severity === 'warning' ? 'text-amber-500' : 'text-rose-500'
+                  }`}>
+                    {aptitude.label}
+                  </span>
+                )}
+              </div>
             </button>
           );
         })}
