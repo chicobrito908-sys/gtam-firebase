@@ -27,6 +27,8 @@ export function useEscalasData() {
   const [escalas, setEscalas] = useState<Escala[]>([]);
   const [missoes, setMissoes] = useState<any[]>([]);
   const [ausencias, setAusencias] = useState<any[]>([]);
+  const [afastamentos, setAfastamentos] = useState<any[]>([]);
+  const [ferias, setFerias] = useState<any[]>([]);
   const [newAfastamentos, setNewAfastamentos] = useState<any[]>([]);
   const [newFerias, setNewFerias] = useState<any[]>([]);
   const [view, setView] = useState<'dashboard' | 'builder'>('dashboard');
@@ -56,6 +58,12 @@ export function useEscalasData() {
         .gte("data", todayStrFromDate(firstDate))
         .lte("data", todayStrFromDate(lastDate));
       setAusencias(ausenciasData || []);
+
+      const { data: afData } = await supabase.from("afastamentos").select("*");
+      setAfastamentos(afData || []);
+
+      const { data: feriasData } = await supabase.from("ferias").select("*");
+      setFerias(feriasData || []);
 
       const { data: efetivoData } = await supabase.from("efetivo").select("*").eq("status", "ATIVO");
       setEfetivo(efetivoData || []);
@@ -101,6 +109,8 @@ export function useEscalasData() {
     escalas,
     missoes,
     ausencias,
+    afastamentos,
+    ferias,
     newAfastamentos,
     newFerias,
     view,

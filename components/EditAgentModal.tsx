@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, User, Activity, Calendar } from "lucide-react";
+import { X, User, Activity } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAgentEditor } from "@/hooks/useAgentEditor";
 import AgentForm from "./AgentEditor/AgentForm";
 import AbsenceManager from "./AgentEditor/AbsenceManager";
-import VacationManager from "./AgentEditor/VacationManager";
 
 interface EditAgentModalProps {
   isOpen: boolean;
@@ -16,15 +15,14 @@ interface EditAgentModalProps {
 }
 
 export default function EditAgentModal({ isOpen, onClose, onSuccess, agent }: EditAgentModalProps) {
-  const [activeTab, setActiveTab] = useState<"dados" | "afastamentos" | "ferias">("dados");
+  const [activeTab, setActiveTab] = useState<"dados" | "afastamentos">("dados");
   const s = useAgentEditor(agent, isOpen, onSuccess, onClose);
 
   if (!isOpen) return null;
 
   const TABS = [
-    { id: "dados", label: "Dados Cadastrais", icon: <User size={14} /> },
+    { id: "dados",        label: "Dados Cadastrais",    icon: <User size={14} /> },
     { id: "afastamentos", label: "Afastamentos / RP / FA", icon: <Activity size={14} /> },
-    { id: "ferias", label: "Gestão de Férias", icon: <Calendar size={14} /> }
   ];
 
   return (
@@ -53,8 +51,16 @@ export default function EditAgentModal({ isOpen, onClose, onSuccess, agent }: Ed
 
           <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
             {activeTab === "dados" && <AgentForm formData={s.formData} setFormData={s.setFormData} onSubmit={s.handleUpdateAgent} onCancel={onClose} loading={s.loading} />}
-            {activeTab === "afastamentos" && <AbsenceManager afastamentos={s.afastamentos} onAdd={s.handleAddAbsence} onRemove={s.handleRemoveAbsence} />}
-            {activeTab === "ferias" && <VacationManager ferias={s.ferias} onAdd={s.handleAddVacation} onRemove={s.handleRemoveVacation} />}
+            {activeTab === "afastamentos" && (
+              <AbsenceManager
+                afastamentos={s.afastamentos}
+                ferias={s.ferias}
+                onAdd={s.handleAddAbsence}
+                onRemove={s.handleRemoveAbsence}
+                onRemoveVacation={s.handleRemoveVacation}
+                agent={agent}
+              />
+            )}
           </div>
         </motion.div>
       </div>

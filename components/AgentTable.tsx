@@ -1,9 +1,11 @@
 "use client";
 
-import { Search, User, Shield, Phone, Activity, Edit, Trash2 } from "lucide-react";
+import { Search, User, Shield, Activity, Edit, Trash2, Zap } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditAgentModal from "./EditAgentModal";
+import { supabase } from "@/lib/supabase";
+import { getAgentAptitude } from "@/lib/services/aptitudeService";
 
 interface Agent {
   id: string;
@@ -45,6 +47,20 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [afastamentos, setAfastamentos] = useState<any[]>([]);
+  const [ferias, setFerias] = useState<any[]>([]);
+
+  const today = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: af } = await supabase.from("afastamentos").select("*");
+      const { data: fe } = await supabase.from("ferias").select("*");
+      setAfastamentos(af || []);
+      setFerias(fe || []);
+    };
+    load();
+  }, []);
 
   const handleEditClick = (agent: Agent) => {
     setSelectedAgent(agent);
@@ -85,7 +101,8 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Nome de Guerra</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Posto/Grad</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80">Turno</th>
-                <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80 text-center">Status</th>
+                <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80 text-center">Status Mestre</th>
+                <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80 text-center">Status Hoje</th>
                 <th className="px-6 py-5 text-sm font-black uppercase tracking-wider text-muted-foreground/80 text-right">Ações</th>
               </tr>
             </thead>
@@ -129,10 +146,29 @@ export default function AgentTable({ agents, onUpdate }: AgentTableProps) {
                     </div>
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <span className={`inline-flex items-center px-5 py-2 rounded-full text-sm font-black border border-white/5 uppercase tracking-widest ${statusColors[agent.status] || "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}>
-                      <Activity size={14} className="mr-2" />
-                      {agent.status}
+                    <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black border uppercase tracking-widest ${statusColors[agent.status] || "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}>
+                      <Activity size={12} className="mr-1.5" />{agent.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-5 text-center">
+                    {(() => {
+                      const apt = getAgentAptitude(agent.id, today, afastamentos, ferias);
+                      if (apt.severity === 'none') return (
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 uppercase tracking-widest">
+                          <Zap size={11} /> DISPONÍVEL
+                        </span>
+                      );
+                      if (apt.severity === 'warning') return (
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black border bg-amber-500/10 text-amber-400 border-amber-500/20 uppercase tracking-widest">
+                          <Zap size={11} /> M.P
+                        </span>
+                      );
+                      return (
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black border bg-rose-500/10 text-rose-400 border-rose-500/20 uppercase tracking-widest">
+                          <Activity size={11} /> {apt.label || 'AFASTADO'}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">

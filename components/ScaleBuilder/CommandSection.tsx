@@ -14,14 +14,15 @@ interface Props {
   efetivo: Agent[];
   onRemove: (id: string) => void;
   onSelect: (equipe: string, funcao: string) => void;
+  isReadOnly?: boolean;
 }
 
-export default function CommandSection({ selectedAgents, efetivo, onRemove, onSelect }: Props) {
+export default function CommandSection({ selectedAgents, efetivo, onRemove, onSelect, isReadOnly }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 border-b border-white/5 pb-4">
         <Star size={16} className="text-amber-400" />
-        <h3 className="font-black uppercase tracking-[0.2em] text-[10px] text-amber-400">Cargos de Comando</h3>
+        <h3 className="font-black uppercase tracking-[0.2em] text-[10px] text-amber-400">Supervisão e Apoio</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {CARGOS_COMANDO.map(cargo => {
@@ -35,12 +36,20 @@ export default function CommandSection({ selectedAgents, efetivo, onRemove, onSe
               {agent ? (
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-black text-white uppercase">{agent.nome_guerra}</span>
-                  <button onClick={() => onRemove(assigned!.agentId)} className="text-[9px] text-rose-400 hover:text-rose-300 uppercase font-bold">Remover</button>
+                  {!isReadOnly && (
+                    <button onClick={() => onRemove(assigned!.agentId)} className="text-[9px] text-rose-400 hover:text-rose-300 uppercase font-bold">Remover</button>
+                  )}
                 </div>
               ) : (
-                <button onClick={() => onSelect(cargo.id, cargo.id)} className={`w-full text-[10px] font-black uppercase border border-dashed rounded-xl py-3 transition-all ${textClass} border-current hover:opacity-80`}>
-                  + Designar
-                </button>
+                !isReadOnly ? (
+                  <button onClick={() => onSelect(cargo.id, cargo.id)} className={`w-full text-[10px] font-black uppercase border border-dashed rounded-xl py-3 transition-all ${textClass} border-current hover:opacity-80`}>
+                    + Designar
+                  </button>
+                ) : (
+                  <div className={`w-full text-[10px] font-black uppercase border border-dashed rounded-xl py-3 text-center opacity-50 ${textClass} border-current`}>
+                    Não Designado
+                  </div>
+                )
               )}
             </div>
           );

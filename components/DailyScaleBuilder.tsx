@@ -11,7 +11,7 @@ import CommandSection from "./ScaleBuilder/CommandSection";
 import SubTurnoList from "./ScaleBuilder/SubTurnoList";
 import Button from "./ui/Button";
 
-const TURNOS = [{ id: "MANHÃ", label: "Turno Manhã (06h - 18h)" }, { id: "NOITE", label: "Turno Noite (18h - 06h)" }, { id: "24H", label: "Turno 24H" }];
+const TURNOS = [{ id: "MANHÃ", label: "Turno Manhã (06h às 14h)" }, { id: "TARDE", label: "Turno Tarde (15h às 23h)" }, { id: "24H", label: "Turno 24H (06h às 06h)" }];
 
 export default function DailyScaleBuilder({ initialDate, onBack }: { initialDate?: string; onBack?: () => void }) {
   const s = useScaleBuilder(initialDate);
@@ -34,9 +34,9 @@ export default function DailyScaleBuilder({ initialDate, onBack }: { initialDate
 
         <TacBoard missoes={s.missoes} onAdd={(tipo) => s.setMissoes(p => [...p, { tipo, descricao: "..." }])} onRemove={(idx) => s.setMissoes(p => p.filter((_, i) => i !== idx))} onUpdate={(idx, desc) => s.setMissoes(p => p.map((m, i) => i === idx ? { ...m, descricao: desc } : m))} />
 
-        <CommandSection selectedAgents={s.selectedAgents} efetivo={s.efetivo} onRemove={s.handleRemoveAgent} onSelect={(e, f) => s.setSelectingFor({ equipe: e, funcao: f })} />
+        <CommandSection selectedAgents={s.comandoAgents} efetivo={s.efetivo} onRemove={s.handleRemoveAgent} onSelect={(e, f) => s.setSelectingFor({ equipe: e, funcao: f })} />
 
-        <SubTurnoList vtrsMap={s.vtrsMap} selectedAgents={s.selectedAgents} efetivo={s.efetivo} getAptitude={s.getAptitude} onAddVtr={s.handleAddVtr} onRenameVtr={s.handleRenameVtr} onToggleVtrType={s.handleToggleVtrType} onRemoveVtr={s.handleRemoveVtr} onRemoveAgent={s.handleRemoveAgent} setSelectingFor={s.setSelectingFor} selectingFor={s.selectingFor} />
+        <SubTurnoList turno={s.turno} vtrsMap={s.vtrsMap} selectedAgents={s.selectedAgents} efetivo={s.efetivo} getAptitude={s.getAptitude} onAddVtr={s.handleAddVtr} onRenameVtr={s.handleRenameVtr} onToggleVtrType={s.handleToggleVtrType} onRemoveVtr={s.handleRemoveVtr} onRemoveAgent={s.handleRemoveAgent} setSelectingFor={s.setSelectingFor} selectingFor={s.selectingFor} />
 
         <div className="pt-8 border-t border-white/5 flex justify-end">
           <Button onClick={s.handleShare} variant="success" size="lg" className="px-12"><Share2 size={18} className="mr-3" /> Publicar WhatsApp</Button>

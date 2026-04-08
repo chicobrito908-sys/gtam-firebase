@@ -2,78 +2,80 @@
 
 import React from "react";
 import { Shield, Zap, Clock, PlusCircle, Trash2 } from "lucide-react";
+import VtrCard from "./VtrCard";
 
 interface ReportProps {
-  scale: any | null;
+  dayScales: any[];
   ausencias: any[];
   onOpenBuilder: () => void;
   onRemoveAusencia: (id: string) => void;
   getAgent: (id: string) => any;
 }
 
-const CardVTR = ({ id, members, getAgent }: any) => (
-  <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 hover:border-primary/40 transition-all group">
-    <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
-      <div className="p-1.5 bg-primary/20 rounded-lg text-primary"><Shield size={12} /></div>
-      <span className="text-[10px] font-black uppercase text-white tracking-tighter">{id}</span>
-    </div>
-    <div className="space-y-2">
-      {members.map((m: any, i: number) => {
-        const ag = getAgent(m.agentId);
-        return (
-          <div key={i} className="flex flex-col border-l border-primary/20 pl-2">
-            <span className="text-[11px] font-black text-white/90 uppercase">
-              {ag?.nome_guerra || "—"}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-);
-
-const TurnoSection = ({ label, sub, agentes, getAgent }: any) => {
-  const equipes: string[] = Array.from(
-    new Set<string>(
-      agentes
-        .filter((a: any) => a.funcao === sub)
-        .map((a: any) => a.equipe as string)
-    )
-  );
-
-  if (equipes.length === 0) return null;
+const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: any) => {
+  if (!vtrsMap) return null;
+  const subs = ["BI", "BII", "TITULAR"];
+  let hasAnyVtr = false;
 
   return (
-    <div className="space-y-3">
-      <h5 className="text-[9px] font-black text-primary/50 uppercase tracking-[0.25em] border-l-2 border-primary/30 pl-3">
-        {label}
+    <div className="space-y-4 mb-8">
+      <h5 className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] border-l-2 border-primary/40 pl-3">
+        TURNO {turnoName}
       </h5>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {equipes.map((equipeId) => (
-          <CardVTR
-            key={equipeId}
-            id={equipeId}
-            members={agentes.filter((a: any) => a.equipe === equipeId && a.funcao === sub)}
-            getAgent={getAgent}
-          />
-        ))}
+      <div className="space-y-6">
+        {subs.map(sub => {
+          const vtrs = vtrsMap[sub] || [];
+          if (vtrs.length === 0) return null;
+          hasAnyVtr = true;
+          return (
+            <div key={sub} className="space-y-3">
+              <h6 className="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest pl-2">• {sub}</h6>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {vtrs.map((v: any) => (
+                  <VtrCard
+                    key={v.id}
+                    vtr={v}
+                    isReadOnly={true}
+                    agents={selectedAgents.filter((a: any) => a.equipe === v.id && a.funcao === sub)}
+                    getAgentById={getAgent}
+                    getAgentAptitude={() => ({ status: true, severity: "none", label: "APTO", conditions: [] })}
+                    onRename={() => {}}
+                    onToggleType={() => {}}
+                    onRemoveVtr={() => {}}
+                    onRemoveAgent={() => {}}
+                    onSelectAgent={() => {}}
+                    isSelecting={false}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
+      {!hasAnyVtr && <div className="text-xs text-white/20 pl-4 italic">Nenhuma viatura escalada para este turno.</div>}
     </div>
   );
 };
 
-export default function ReportDetailedV2({ scale, ausencias, onOpenBuilder, onRemoveAusencia, getAgent }: ReportProps) {
-  const agentes = scale?.agentes || [];
-  const dayAus = ausencias.filter((a: any) => a.data === scale?.data);
+export default function ReportDetailedV2({ dayScales, ausencias, onOpenBuilder, onRemoveAusencia, getAgent }: ReportProps) {
+  const comandoScale = dayScales.find((sc) => sc.turno === "COMANDO");
+  const comandoAgents = comandoScale?.agentes || [];
+  
+  // Operacional shifts (we ignore COMANDO and GERAL)
+  const opScales = dayScales.filter((sc) => sc.turno !== "COMANDO" && sc.turno !== "GERAL");
+  
+  // To verify if there are any ausencias for the first scale's date (or just use dayScales[0].data if available)
+  const scaleDate = dayScales.length > 0 ? dayScales[0].data : null;
+  const dayAus = scaleDate ? ausencias.filter((a: any) => a.data === scaleDate) : [];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Supervisão e Armaria */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[{ id: "SUPERVISÃO", color: "purple" }, { id: "ARMARIA", color: "amber" }].map(cmd => {
-          const entry = agentes.find((a: any) => a.equipe === cmd.id);
+          const entry = comandoAgents.find((a: any) => a.funcao === cmd.id);
           const ag = entry ? getAgent(entry.agentId) : null;
-          const displayName = ag?.nome_guerra || "NÃO ESCALADO";
+          const displayName = ag?.nome_guerra || ag?.nome_completo || "NÃO ESCALADO";
           return (
             <div key={cmd.id} className={`bg-${cmd.color}-600/10 border border-${cmd.color}-500/20 p-5 rounded-[1.5rem] flex items-center justify-between`}>
               <div className="flex flex-col">
@@ -98,9 +100,21 @@ export default function ReportDetailedV2({ scale, ausencias, onOpenBuilder, onRe
           </button>
         </div>
 
-        <TurnoSection label="Turno I  (BI)" sub="BI" agentes={agentes} getAgent={getAgent} />
-        <TurnoSection label="Turno II (BII)" sub="BII" agentes={agentes} getAgent={getAgent} />
-        <TurnoSection label="Apoio / 24h" sub="TITULAR" agentes={agentes} getAgent={getAgent} />
+        {opScales.length === 0 ? (
+          <div className="text-center py-12 border border-dashed border-white/10 rounded-[24px]">
+             <span className="text-xs font-black text-white/30 uppercase tracking-widest">NENHUMA ESCALA CADASTRADA HOJE</span>
+          </div>
+        ) : (
+          opScales.map((sc, i) => (
+            <TurnoSectionGroup 
+              key={sc.id || i}
+              turnoName={sc.turno} 
+              vtrsMap={sc.vtrsMap} 
+              selectedAgents={sc.agentes || []} 
+              getAgent={getAgent} 
+            />
+          ))
+        )}
       </div>
 
       {/* Afastamentos */}

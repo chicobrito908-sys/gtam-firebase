@@ -197,16 +197,8 @@ function buildForceCards(
 ): ForceCard[] {
   const activeAgents = efetivo.filter(isActiveAgent);
   
-  // Condições que impedem o serviço (conforme DailyScaleBuilder)
-  const IMPEDITIVE_TYPES = [
-    'ATESTADO', 'FERIAS', 'LICENCA', 'LICENÇA', 'L.P', 'LICENÇA PRÊMIO', 
-    'F.A', 'FOLGA AGENDADA', 'DOAÇÃO', 'AMSEC', 'R.P', 'REDUÇÃO'
-  ];
-
   const blockedIds = new Set([
-    ...afastamentosAtivos
-      .filter(a => IMPEDITIVE_TYPES.some(type => a.tipo.toUpperCase().includes(type)))
-      .map((item) => String(item.efetivo_id)),
+    ...afastamentosAtivos.map((item) => String(item.efetivo_id)),
     ...feriasAtivas.map((item) => String(item.efetivo_id)),
   ]);
 
@@ -344,8 +336,8 @@ export default function Home() {
 
         const efetivoAtivo = efetivo.filter(isActiveAgent);
         const escalaHoje = escalas.filter((item) => item.data === today);
-        const afastamentosAtivos = afastamentos.filter((item) => item.data_inicio <= today && item.data_fim >= today);
-        const feriasAtivas = ferias.filter((item) => item.status === "AGENDADO" && item.data_inicio <= today && item.data_fim >= today);
+        const afastamentosAtivos = afastamentos.filter((item) => item.data_inicio <= today && (item.data_fim || item.data_inicio) >= today);
+        const feriasAtivas = ferias.filter((item) => item.status === "AGENDADO" && item.data_inicio <= today && (item.data_fim || item.data_inicio) >= today);
         const feriasProximas = ferias.filter((item) => item.status === "AGENDADO" && item.data_inicio >= today && item.data_inicio <= next30Str);
 
         const rankingProdutividade = efetivoAtivo

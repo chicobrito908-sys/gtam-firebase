@@ -88,3 +88,12 @@ CÃ³digo testado localmente. Sem quebra de layout. Push para a branch `main` libe
 ---
 *Status da SessÃ£o: CONCLUÃDA E VALIDADA*
 >>>>>>> 444553a (feat: restauraÃ§Ã£o visual seletor Ã¢mbar, limpeza de ID e conformidade arquitetural SDD)
+
+
+## Sessão de Refinamento de Lógica SSOT e Dashboards (abril de 2026)
+
+1. **Ajuste de Timezone (Fuso Horário BRT)**: Corrigida a inicialização da data local na inicialização do ScaleBuilder e no dashboard home para evitar o rollover precoce ao anoitecer.
+2. **Rótulos dos Turnos**: Padronizados os nomes e metadados dos turnos oficiais do planejamento - Manhã (06h às 14h), Tarde (15h às 23h), 24H (06h às 06h).
+3. **Isolamento e Filtragem Exclusiva de Viaturas**: Refatoração do SubTurnoList.tsx para apresentar as viaturas de forma filtrada mediante turno em vez de exibi-las globalmente, mantendo a camada de supervisão intacta.
+4. **Simetrização dos Dashboards**: Removidas lógicas condicionais complexas baseadas em matching de strings exatas de nome no dashboard principal para aderir à regra universal: o servidor em férias ou com qualquer afastamento agendado bloqueia estatisticamente as contagens de disponíveis. Total efetivo disponível = Servidores totais ativos - afastamentos no período.
+5. **Correção do Cadastro Incompleto**: Adicionado fallback de datas para que os cálculos do dashboard consigam prever ausências cuja data_fim foi subtituída ou herdada implicitamente pela data inicial (item.data_fim || item.data_inicio).

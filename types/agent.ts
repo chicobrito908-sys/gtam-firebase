@@ -22,7 +22,9 @@ export interface VTR {
 }
 
 export interface AptitudeResult {
+  isFit: boolean;
   severity: "none" | "warning" | "error" | "info";
   label?: string | null;
   details?: string | null;
 }
+
