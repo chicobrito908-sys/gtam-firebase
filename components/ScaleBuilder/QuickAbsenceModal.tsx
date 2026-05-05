@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { X, UserPlus, Calendar, Shield, Search, Check } from "lucide-react";
+import { X, Calendar, Shield, Search, Check } from "lucide-react";
 
 interface QuickAbsenceModalProps {
   isOpen: boolean;

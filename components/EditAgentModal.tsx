@@ -7,11 +7,13 @@ import { useAgentEditor } from "@/hooks/useAgentEditor";
 import AgentForm from "./AgentEditor/AgentForm";
 import AbsenceManager from "./AgentEditor/AbsenceManager";
 
+import { type Agent } from "./AgentTable/AgentRow";
+
 interface EditAgentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  agent: any;
+  agent: Agent | null;
 }
 
 export default function EditAgentModal({ isOpen, onClose, onSuccess, agent }: EditAgentModalProps) {
@@ -43,7 +45,7 @@ export default function EditAgentModal({ isOpen, onClose, onSuccess, agent }: Ed
 
           <div className="flex bg-[#0d1629] border-b border-white/5 p-1 gap-1">
             {TABS.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? "bg-[#7c3aed] text-white shadow-lg shadow-[#7c3aed]/20" : "text-white/20 hover:text-white hover:bg-white/5"}`}>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id as "dados" | "afastamentos")} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? "bg-[#7c3aed] text-white shadow-lg shadow-[#7c3aed]/20" : "text-white/20 hover:text-white hover:bg-white/5"}`}>
                 {tab.icon} {tab.label}
               </button>
             ))}

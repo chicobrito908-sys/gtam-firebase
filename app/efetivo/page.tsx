@@ -31,11 +31,11 @@ export default function EfetivoPage() {
     try {
       const { data, error } = await supabase
         .from("efetivo")
-        .select("*")
-        .order("antiguidade", { ascending: true });
+        .select("*");
 
       if (error) throw error;
-      setAgents(data || []);
+      const sorted = (data || []).sort((a, b) => Number(a.matricula) - Number(b.matricula));
+      setAgents(sorted);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "desconhecido";
       console.error("Erro ao buscar efetivo:", errorMsg);

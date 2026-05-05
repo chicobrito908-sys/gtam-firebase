@@ -491,6 +491,6 @@ export const supabase = {
   },
 
   from(collectionName: string) {
-    return new FirebaseQueryBuilder<any>(collectionName);
+    return new FirebaseQueryBuilder(collectionName);
   },
 };

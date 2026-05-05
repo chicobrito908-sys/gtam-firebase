@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Shield, Star, Zap, Trash2, Plus } from "lucide-react";
+import { Shield, Star, Zap, Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 interface Mission {

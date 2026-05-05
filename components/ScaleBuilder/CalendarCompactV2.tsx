@@ -8,13 +8,15 @@ import { motion, AnimatePresence } from "framer-motion";
 const WEEK_DAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
+import { type DayScale } from "./ReportDetailedV2";
+
 interface CalendarProps {
   currentDate: Date;
   selectedDay: string;
   setSelectedDay: (date: string) => void;
   changeMonth: (offset: number) => void;
-  escalas: any[];
-  ausencias: any[];
+  escalas: DayScale[];
+  ausencias: { data: string; tipo: string }[];
 }
 
 export default function CalendarCompactV2({ currentDate, selectedDay, setSelectedDay, changeMonth, escalas, ausencias }: CalendarProps) {

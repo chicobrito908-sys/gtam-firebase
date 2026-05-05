@@ -5,17 +5,23 @@ import { Shield, Fingerprint, User, Layers, Clock, Activity, Save } from "lucide
 import Button from "@/components/ui/Button";
 
 interface AgentFormProps {
-  formData: any;
+  formData: {
+    nome_guerra: string;
+    matricula: string;
+    nome_completo: string;
+    grupo_turno: string;
+    posto_grad: string;
+    tipo_escala: string;
+    status: string;
+    [key: string]: any;
+  };
   setFormData: (data: any) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   loading: boolean;
 }
 
-const POSTOS_GRAD = ["Guarda", "Subinspetor", "Inspetor"];
-const TURNOS = ["A", "B", "A II", "B II"];
-const ESCALAS = ["24x72", "2x2", "Expediente"];
-const STATUS_OPTIONS = ["ATIVO", "FERIAS", "AFASTADO", "LICENÇA"]; // Corrigido typo LICENCO
+import { POSTOS_GRAD, TURNOS, ESCALAS, STATUS_OPTIONS } from "@/lib/constants/efetivo";
 
 export default function AgentForm({
   formData,

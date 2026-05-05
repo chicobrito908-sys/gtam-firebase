@@ -4,7 +4,7 @@ import React from "react";
 import { Shield, Zap, Star, LayoutDashboard } from "lucide-react";
 
 interface OperationalInsightsProps {
-  missoes: any[];
+  missoes: { tipo: string; descricao: string }[];
   expandedIndex: number | null;
   setExpandedIndex: (idx: number | null) => void;
 }

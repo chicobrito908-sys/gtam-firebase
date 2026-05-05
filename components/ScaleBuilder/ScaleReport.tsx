@@ -3,16 +3,34 @@
 import React from "react";
 import { Shield, Zap, LayoutDashboard, Trash2, Clock, UserPlus } from "lucide-react";
 
-interface ScaleReportProps {
-  scaleData: any | null;
-  ausencias: any[];
-  selectedDay: string;
-  onRemoveAusencia: (id: string) => void;
-  onOpenBuilder: () => void;
-  getAgentById: (id: string) => any;
+import { type Agent } from "../AgentTable/AgentRow";
+
+interface ScaleAgent {
+  agentId: string;
+  equipe: string;
+  funcao: string;
+  efetivo?: Agent;
 }
 
-const VTRCard = ({ equipe, members, getAgentById }: { equipe: string; members: any[]; getAgentById: (id: string) => any }) => (
+interface ScaleVtr {
+  id: string;
+  prefixo: string;
+  motoristaId?: string;
+  comandanteId?: string;
+}
+
+interface ScaleReportProps {
+  scaleData: {
+    agentes: ScaleAgent[];
+    vtrsMap: Record<string, ScaleVtr[]>;
+  } | null;
+  ausencias: { id: string; efetivo?: { nome_guerra: string }; tipo: string }[];
+  selectedDay: string;
+  onRemoveAusencia: (id: string) => void;
+  getAgentById: (id: string) => Agent | undefined;
+}
+
+const VTRCard = ({ equipe, members, getAgentById }: { equipe: string; members: ScaleAgent[]; getAgentById: (id: string) => Agent | undefined }) => (
   <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-5 hover:border-primary/40 transition-all group">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
@@ -35,23 +53,23 @@ const VTRCard = ({ equipe, members, getAgentById }: { equipe: string; members: a
   </div>
 );
 
-export default function ScaleReport({ scaleData, ausencias, selectedDay, onRemoveAusencia, onOpenBuilder, getAgentById }: ScaleReportProps) {
+export default function ScaleReport({ scaleData, ausencias, selectedDay, onRemoveAusencia, getAgentById }: ScaleReportProps) {
   const agentes = scaleData?.agentes || [];
   const vtrsMap = scaleData?.vtrsMap || {};
 
-  const supervisao = agentes.find((e: any) => e.equipe === "SUPERVISÃO");
-  const armaria = agentes.find((e: any) => e.equipe === "ARMARIA");
+  const supervisao = agentes.find((e) => e.equipe === "SUPERVISÃO");
+  const armaria = agentes.find((e) => e.equipe === "ARMARIA");
   
-  const getSubTurnoAgentes = (subId: string) => agentes.filter((a: any) => a.funcao === subId && a.equipe !== "SUPERVISÃO" && a.equipe !== "ARMARIA");
+  const getSubTurnoAgentes = (subId: string) => agentes.filter((a) => a.funcao === subId && a.equipe !== "SUPERVISÃO" && a.equipe !== "ARMARIA");
 
   const vtrsBI = getSubTurnoAgentes("BI");
   const vtrsBII = getSubTurnoAgentes("BII");
-  const guarnicaoApoio = agentes.filter((e: any) => e.funcao === "TITULAR" && !["SUPERVISÃO", "ARMARIA", "GUARNIÇÃO"].includes(e.equipe || ""));
-  const guarnicaoBase = agentes.filter((e: any) => e.equipe === "GUARNIÇÃO");
+  const guarnicaoApoio = agentes.filter((e) => e.funcao === "TITULAR" && !["SUPERVISÃO", "ARMARIA", "GUARNIÇÃO"].includes(e.equipe || ""));
+  const guarnicaoBase = agentes.filter((e) => e.equipe === "GUARNIÇÃO");
 
-  const renderVtrCards = (subAgentes: any[], subId: string) => {
+  const renderVtrCards = (subAgentes: ScaleAgent[], subId: string) => {
     const subVtrs = vtrsMap[subId] || [];
-    return subVtrs.map((v: any, idx: number) => (
+    return subVtrs.map((v: ScaleVtr, idx: number) => (
       <VTRCard key={idx} equipe={v.id} members={subAgentes.filter(a => a.equipe === v.id)} getAgentById={getAgentById} />
     ));
   };
@@ -97,13 +115,13 @@ export default function ScaleReport({ scaleData, ausencias, selectedDay, onRemov
       <div className="bg-blue-600/5 border border-blue-500/10 p-6 rounded-[2rem] space-y-4">
         <div className="flex items-center gap-2 text-blue-400 mb-4"><UserPlus size={16} /><span className="text-[10px] font-black uppercase tracking-widest">GUARNIÇÃO APOIO</span></div>
         <div className="space-y-4">
-          {guarnicaoBase.map((m: any, idx: number) => {
+          {guarnicaoBase.map((m: ScaleAgent, idx: number) => {
             const ag = getAgentById(m.agentId);
             return (
               <div key={idx} className="flex justify-between items-center bg-primary/10 p-3 rounded-xl border border-primary/20"><span className="text-xs font-black text-white uppercase">{ag?.nome_guerra || "---"}</span><span className="text-[9px] font-bold text-primary/50 uppercase">Base 24h</span></div>
             );
           })}
-          {guarnicaoApoio.map((m: any, idx: number) => {
+          {guarnicaoApoio.map((m: ScaleAgent, idx: number) => {
             const ag = getAgentById(m.agentId);
             return (
               <div key={idx} className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">

@@ -41,7 +41,14 @@ export default function FaltasPage() {
   ];
   
   // Form State
-  const [efetivo, setEfetivo] = useState<any[]>([]);
+  interface EfetivoDropdown {
+    id: string;
+    nome_guerra: string;
+    matricula: string;
+    posto_grad: string;
+  }
+
+  const [efetivo, setEfetivo] = useState<EfetivoDropdown[]>([]);
   const [formData, setFormData] = useState({
     efetivo_id: "",
     data: new Date().toISOString().split('T')[0],

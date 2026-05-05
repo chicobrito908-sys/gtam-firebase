@@ -35,6 +35,11 @@ export const formatDateToPortuguese = (dateStr: string): string => {
   return `${weekdays[dateObj.getDay()]}, ${day} DE ${months[month - 1]} DE ${year}`;
 };
 
+interface Ausencia {
+  efetivo_id: string;
+  tipo: string;
+}
+
 /**
  * Gera o texto formatado para publicação no WhatsApp.
  */
@@ -43,7 +48,7 @@ export const generateWhatsAppText = (
   turno: string,
   selectedAgents: ScaleEntry[],
   missoes: { tipo: string; descricao: string }[],
-  activeAusencias: any[],
+  activeAusencias: Ausencia[],
   vtrsMap: { [key: string]: VTR[] },
   getAgentById: (id: string) => Agent | undefined
 ): string => {

@@ -7,14 +7,29 @@ import { Share2, LayoutDashboard, CalendarDays, Users, ShieldCheck, AlertTriangl
 import Button from "@/components/ui/Button";
 import { getAgentAptitude } from "@/lib/services/aptitudeService";
 
+import { type Agent, type Afastamento, type Ferias } from "../AgentTable/AgentRow";
+import { type DayScale } from "./ReportDetailedV2";
+
 interface DashboardProps {
-  s: any; // Hook useEscalasData
+  s: {
+    escalas: DayScale[];
+    selectedDay: string;
+    afastamentos: Afastamento[];
+    ferias: Ferias[];
+    efetivo: Agent[];
+    setView: (view: string) => void;
+    removeAusencia: (id: string) => void;
+    currentDate: Date;
+    setSelectedDay: (day: string) => void;
+    changeMonth: (offset: number) => void;
+    ausencias: { id: string; efetivo?: { nome_guerra: string }; tipo: string }[];
+  };
   handleShare: () => void;
 }
 
 export default function ScaleDashboardV2({ s, handleShare }: DashboardProps) {
   const [tab, setTab] = useState<'HOJE' | 'CALENDÁRIO'>('HOJE');
-  const d = s.escalas.filter((sc: any) => sc.data === s.selectedDay);
+  const d = s.escalas.filter((sc: DayScale) => sc.data === s.selectedDay);
   const titleDate = new Date(s.selectedDay + "T12:00:00").toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 
   // HUD Analytics — SSOT: afastamentos e férias do módulo Efetivo cruzados com selectedDay
@@ -23,7 +38,7 @@ export default function ScaleDashboardV2({ s, handleShare }: DashboardProps) {
   let disponiveis = 0;
   let restricoes = 0;
   
-  s.efetivo.forEach((agent: any) => {
+  s.efetivo.forEach((agent: Agent) => {
     const apt = getAgentAptitude(agent.id, s.selectedDay, afastamentos, ferias);
     if (apt.isFit && apt.severity === 'none') disponiveis++;
   });
@@ -64,14 +79,14 @@ export default function ScaleDashboardV2({ s, handleShare }: DashboardProps) {
 
       {/* MOBILE TABS */}
       <div className="flex lg:hidden bg-white/5 p-1 rounded-2xl border border-white/5">
-        {['HOJE', 'CALENDÁRIO'].map((t: any) => (
+        {(['HOJE', 'CALENDÁRIO'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${tab === t ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white/60'}`}>{t}</button>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className={`lg:col-span-8 space-y-8 ${tab === 'HOJE' ? 'block' : 'hidden lg:block'}`}>
-           <ReportDetailedV2 dayScales={d} ausencias={s.ausencias} onOpenBuilder={() => s.setView('builder')} onRemoveAusencia={s.removeAusencia} getAgent={(id: string) => s.efetivo.find((a:any) => a.id === id)} />
+           <ReportDetailedV2 dayScales={d} ausencias={s.ausencias} onOpenBuilder={() => s.setView('builder')} onRemoveAusencia={s.removeAusencia} getAgent={(id: string) => s.efetivo.find((a: Agent) => a.id === id)} />
         </div>
         <div className={`lg:col-span-4 ${tab === 'CALENDÁRIO' ? 'block' : 'hidden lg:block'}`}>
            <CalendarCompactV2 currentDate={s.currentDate} selectedDay={s.selectedDay} setSelectedDay={s.setSelectedDay} changeMonth={s.changeMonth} escalas={s.escalas} ausencias={s.ausencias} />

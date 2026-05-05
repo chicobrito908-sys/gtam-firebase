@@ -10,10 +10,9 @@ interface AgentCardProps {
   isScaled?: boolean;
   onSelect?: (id: string) => void;
   onRemove?: () => void;
-  size?: "sm" | "md";
 }
 
-export default function AgentCard({ agent, aptitude, isScaled, onSelect, onRemove, size = "md" }: AgentCardProps) {
+export default function AgentCard({ agent, aptitude, isScaled, onSelect, onRemove }: AgentCardProps) {
   const isError = aptitude.severity === "error";
 
   if (!agent) {

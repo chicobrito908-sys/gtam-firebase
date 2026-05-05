@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Shield, User, Fingerprint, Award, Layers, Save } from "lucide-react";
+import { X, Shield, User, Fingerprint, Award, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 
@@ -11,9 +11,7 @@ interface AddAgentModalProps {
   onSuccess: () => void;
 }
 
-const POSTOS_GRAD = ["Guarda", "Subinspetor", "Inspetor"];
-const EQUIPES = ["ALFA", "BRAVO", "CHARLIE", "DELTA"];
-const FUNCOES = ["Comandante", "Motorista", "Patrulheiro"];
+import { POSTOS_GRAD, TURNOS, ESCALAS } from "@/lib/constants/efetivo";
 
 export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentModalProps) {
   const [loading, setLoading] = useState(false);
@@ -22,7 +20,7 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
     nome_completo: "",
     nome_guerra: "",
     posto_grad: "Guarda",
-    grupo_turno: "ALFA",
+    grupo_turno: "A",
     tipo_escala: "24x72",
     status: "ATIVO",
     setor: "GTAM",
@@ -48,7 +46,7 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
         nome_completo: "",
         nome_guerra: "",
         posto_grad: "Guarda",
-        grupo_turno: "ALFA",
+        grupo_turno: "A",
         tipo_escala: "24x72",
         status: "ATIVO",
         setor: "GTAM",
@@ -182,6 +180,34 @@ export default function AddAgentModal({ isOpen, onClose, onSuccess }: AddAgentMo
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Turno / Grupo */}
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Turno / Grupo</label>
+                <select
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-4 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-base font-bold appearance-none text-white"
+                  value={formData.grupo_turno}
+                  onChange={(e) => setFormData({ ...formData, grupo_turno: e.target.value })}
+                >
+                  {TURNOS.map((t) => (
+                    <option key={t} value={t} className="bg-[#0a0f1e]">{t}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Tipo de Escala */}
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Tipo de Escala</label>
+                <select
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-4 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all text-base font-bold appearance-none text-white"
+                  value={formData.tipo_escala}
+                  onChange={(e) => setFormData({ ...formData, tipo_escala: e.target.value })}
+                >
+                  {ESCALAS.map((s) => (
+                    <option key={s} value={s} className="bg-[#0a0f1e]">{s}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Botão Salvar */}

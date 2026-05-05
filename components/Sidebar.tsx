@@ -34,7 +34,6 @@ const categories = [
     title: "GESTÃO",
     items: [
       { name: "Escalas", href: "/escalas", icon: Calendar },
-      { name: "Plantões", icon: Shield, href: "/plantoes" },
     ]
   },
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { 
   Palmtree, 
   Plus, 
@@ -9,7 +9,8 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  ChevronRight
+  ChevronRight,
+  Trash2
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -38,19 +39,27 @@ export default function FeriasPage() {
     nome_guerra: string;
     matricula: string;
     posto_grad: string;
+    antiguidade?: number;
   }
 
   // Form State
   const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    id?: string;
+    efetivo_id: string;
+    ano_referencia: number;
+    data_inicio: string;
+    data_fim: string;
+    status: 'AGENDADO' | 'GOZADO' | 'CANCELADO';
+  }>({
     efetivo_id: "",
     ano_referencia: new Date().getFullYear(),
     data_inicio: "",
     data_fim: "",
-    status: "AGENDADO" as 'AGENDADO' | 'GOZADO' | 'CANCELADO'
+    status: "AGENDADO"
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const { data: feData, error: feError } = await supabase
@@ -62,29 +71,55 @@ export default function FeriasPage() {
 
       const { data: efData, error: efError } = await supabase
         .from("efetivo")
-        .select("id, nome_guerra, matricula, posto_grad")
-        .order("nome_guerra");
+        .select("id, nome_guerra, matricula, posto_grad, antiguidade")
+        .order("antiguidade", { ascending: true });
 
       if (efError) throw efError;
 
       if (feData) setFerias(feData as unknown as Ferias[]);
-      if (efData) setEfetivo(efData as EfetivoBasico[]);
+      if (efData) {
+        const sortedEfData = (efData as EfetivoBasico[]).sort((a, b) => {
+          if ((a.antiguidade ?? 9999) !== (b.antiguidade ?? 9999)) {
+            return (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999);
+          }
+          return (a.nome_guerra || "").localeCompare(b.nome_guerra || "");
+        });
+        setEfetivo(sortedEfData);
+      }
     } catch (error) {
       console.error("Erro ao carregar dados de ferias:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-      const { error } = await supabase.from("ferias").insert([formData]);
-      if (error) throw error;
+      
+      if (formData.id) {
+        const { error } = await supabase.from("ferias").update({
+          efetivo_id: formData.efetivo_id,
+          ano_referencia: formData.ano_referencia,
+          data_inicio: formData.data_inicio,
+          data_fim: formData.data_fim,
+          status: formData.status
+        }).eq("id", formData.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("ferias").insert([{
+          efetivo_id: formData.efetivo_id,
+          ano_referencia: formData.ano_referencia,
+          data_inicio: formData.data_inicio,
+          data_fim: formData.data_fim,
+          status: formData.status
+        }]);
+        if (error) throw error;
+      }
       
       setShowModal(false);
       fetchData();
@@ -93,11 +128,35 @@ export default function FeriasPage() {
         ano_referencia: new Date().getFullYear(),
         data_inicio: "",
         data_fim: "",
-        status: "AGENDADO" as const
+        status: "AGENDADO"
       });
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : "desconhecido";
       alert("Erro ao salvar ferias: " + errorMsg);
+    }
+  };
+
+  const handleEdit = (f: Ferias) => {
+    setFormData({
+      id: f.id,
+      efetivo_id: f.efetivo_id,
+      ano_referencia: f.ano_referencia,
+      data_inicio: f.data_inicio,
+      data_fim: f.data_fim,
+      status: f.status
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este registro de férias?")) return;
+    try {
+      const { error } = await supabase.from("ferias").delete().eq("id", id);
+      if (error) throw error;
+      fetchData();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "desconhecido";
+      alert("Erro ao excluir: " + errorMsg);
     }
   };
 
@@ -130,7 +189,16 @@ export default function FeriasPage() {
         </div>
         </div>
         <button 
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setFormData({
+              efetivo_id: "",
+              ano_referencia: new Date().getFullYear(),
+              data_inicio: "",
+              data_fim: "",
+              status: "AGENDADO"
+            });
+            setShowModal(true);
+          }}
           className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-900/20"
         >
           <Plus size={16} /> Agendar Férias
@@ -181,7 +249,8 @@ export default function FeriasPage() {
                 <th className="px-6 py-4">Agente</th>
                 <th className="px-6 py-4 font-black">Ref.</th>
                 <th className="px-6 py-4 font-black">Período</th>
-                <th className="px-6 py-4 font-black text-right">Status</th>
+                <th className="px-6 py-4 font-black text-center">Status</th>
+                <th className="px-6 py-4 font-black text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.03]">
@@ -208,12 +277,12 @@ export default function FeriasPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-[10px] font-bold">
                       <Calendar size={12} className="text-muted-foreground" />
-                      <span>{new Date(f.data_inicio).toLocaleDateString()}</span>
+                      <span>{f.data_inicio.split('-').reverse().join('/')}</span>
                       <ChevronRight size={10} className="text-muted-foreground" />
-                      <span>{new Date(f.data_fim).toLocaleDateString()}</span>
+                      <span>{f.data_fim.split('-').reverse().join('/')}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-center">
                     <span className={`inline-flex items-center gap-1.5 text-[9px] font-black px-3 py-1 rounded-full border uppercase tracking-widest ${getStatusColor(f.status)}`}>
                       {f.status === 'AGENDADO' && <Clock size={10} />}
                       {f.status === 'GOZADO' && <CheckCircle2 size={10} />}
@@ -221,11 +290,29 @@ export default function FeriasPage() {
                       {f.status}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => handleEdit(f)}
+                        className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        title="Editar Registro"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(f.id)}
+                        className="p-2 hover:bg-rose-500/10 rounded-lg text-muted-foreground hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
+                        title="Excluir Registro"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {filteredFerias.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={4} className="py-20 text-center opacity-30">
+                  <td colSpan={5} className="py-20 text-center opacity-30">
                     <Palmtree size={48} className="mx-auto mb-4" />
                     <p className="text-xs font-black uppercase tracking-[0.2em]">Nenhum registro de férias encontrado</p>
                   </td>
@@ -242,7 +329,7 @@ export default function FeriasPage() {
           <div className="bg-card border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in duration-300">
             <div className="p-6 border-b border-white/5 bg-amber-500/5">
               <h3 className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
-                <Calendar className="text-amber-500" /> Agendar Período
+                <Calendar className="text-amber-500" /> {formData.id ? 'Editar Férias' : 'Agendar Período'}
               </h3>
             </div>
             
@@ -322,7 +409,7 @@ export default function FeriasPage() {
                   type="submit"
                   className="flex-1 px-4 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-amber-900/20"
                 >
-                  Salvar Agendamento
+                  {formData.id ? 'Atualizar Registro' : 'Salvar Agendamento'}
                 </button>
               </div>
             </form>

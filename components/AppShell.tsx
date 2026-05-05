@@ -4,16 +4,14 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { AuthProvider, useAuth } from "@/components/AuthProvider";
-import { supabase } from "@/lib/supabase";
 
 const LOGIN_ROUTE = "/login";
-const WAITING_ROUTE = "/aguardando-aprovacao";
 const PUBLIC_ROUTES = new Set([LOGIN_ROUTE]);
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, profile, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   const isPublicRoute = PUBLIC_ROUTES.has(pathname);
   const shouldShowSidebar = !isPublicRoute && !!user;

@@ -4,7 +4,7 @@ import React from "react";
 import { UserPlus } from "lucide-react";
 import VtrCard from "./VtrCard";
 import Button from "../ui/Button";
-import { Agent, AptitudeResult } from "@/types/agent";
+
 
 const SUB_TURNOS = [
   { id: "BI", label: "Turno I" },
@@ -12,10 +12,12 @@ const SUB_TURNOS = [
   { id: "TITULAR", label: "Escala 24h / Apoio" },
 ];
 
+import { Agent, AptitudeResult, VTR, ScaleEntry } from "@/types/agent";
+
 interface Props {
   turno?: string;
-  vtrsMap: Record<string, any[]>;
-  selectedAgents: any[];
+  vtrsMap: Record<string, VTR[]>;
+  selectedAgents: ScaleEntry[];
   efetivo: Agent[];
   getAptitude: (id: string) => AptitudeResult;
   onAddVtr: (subId: string) => void;
@@ -23,8 +25,8 @@ interface Props {
   onToggleVtrType: (subId: string, vtrId: string) => void;
   onRemoveVtr: (subId: string, vtrId: string) => void;
   onRemoveAgent: (id: string) => void;
-  setSelectingFor: (val: any) => void;
-  selectingFor: any;
+  setSelectingFor: (val: { equipe: string; funcao: string } | null) => void;
+  selectingFor: { equipe: string; funcao: string } | null;
   isReadOnly?: boolean;
 }
 

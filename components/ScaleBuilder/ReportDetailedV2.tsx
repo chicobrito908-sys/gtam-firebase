@@ -4,15 +4,37 @@ import React from "react";
 import { Shield, Zap, Clock, PlusCircle, Trash2 } from "lucide-react";
 import VtrCard from "./VtrCard";
 
+import { type Agent } from "../AgentTable/AgentRow";
+
+interface ScaleAgent {
+  agentId: string;
+  equipe: string;
+  funcao: string;
+  efetivo?: Agent;
+}
+
+interface ScaleVtr {
+  id: string;
+  prefixo: string;
+}
+
+interface DayScale {
+  id: string;
+  turno: string;
+  data: string;
+  agentes: ScaleAgent[];
+  vtrsMap: Record<string, ScaleVtr[]>;
+}
+
 interface ReportProps {
-  dayScales: any[];
+  dayScales: DayScale[];
   ausencias: any[];
   onOpenBuilder: () => void;
   onRemoveAusencia: (id: string) => void;
-  getAgent: (id: string) => any;
+  getAgent: (id: string) => Agent | undefined;
 }
 
-const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: any) => {
+const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: { turnoName: string; vtrsMap: Record<string, ScaleVtr[]>; selectedAgents: ScaleAgent[]; getAgent: (id: string) => Agent | undefined }) => {
   if (!vtrsMap) return null;
   const subs = ["BI", "BII", "TITULAR"];
   let hasAnyVtr = false;
@@ -31,12 +53,12 @@ const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: any
             <div key={sub} className="space-y-3">
               <h6 className="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest pl-2">• {sub}</h6>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {vtrs.map((v: any) => (
+                {vtrs.map((v: ScaleVtr) => (
                   <VtrCard
                     key={v.id}
-                    vtr={v}
+                    vtr={v as any}
                     isReadOnly={true}
-                    agents={selectedAgents.filter((a: any) => a.equipe === v.id && a.funcao === sub)}
+                    agents={selectedAgents.filter((a: ScaleAgent) => a.equipe === v.id && a.funcao === sub)}
                     getAgentById={getAgent}
                     getAgentAptitude={() => ({ status: true, severity: "none", label: "APTO", conditions: [] })}
                     onRename={() => {}}
@@ -66,14 +88,14 @@ export default function ReportDetailedV2({ dayScales, ausencias, onOpenBuilder, 
   
   // To verify if there are any ausencias for the first scale's date (or just use dayScales[0].data if available)
   const scaleDate = dayScales.length > 0 ? dayScales[0].data : null;
-  const dayAus = scaleDate ? ausencias.filter((a: any) => a.data === scaleDate) : [];
+  const dayAus = scaleDate ? ausencias.filter((a: { data: string }) => a.data === scaleDate) : [];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Supervisão e Armaria */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[{ id: "SUPERVISÃO", color: "purple" }, { id: "ARMARIA", color: "amber" }].map(cmd => {
-          const entry = comandoAgents.find((a: any) => a.funcao === cmd.id);
+        {[{ id: "SUPERVISÃO", color: "purple" } as const, { id: "ARMARIA", color: "amber" } as const].map(cmd => {
+          const entry = comandoAgents.find((a: ScaleAgent) => a.funcao === cmd.id);
           const ag = entry ? getAgent(entry.agentId) : null;
           const displayName = ag?.nome_guerra || ag?.nome_completo || "NÃO ESCALADO";
           return (
@@ -124,7 +146,7 @@ export default function ReportDetailedV2({ dayScales, ausencias, onOpenBuilder, 
             <Shield size={12} /> Afastamentos / Folgas
           </h5>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {dayAus.map((a: any, i: number) => (
+            {dayAus.map((a: { id: string; efetivo?: { nome_guerra: string }; tipo: string }, i: number) => (
               <div key={i} className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
                 <div className="flex flex-col">
                   <span className="text-xs font-black text-white uppercase">{a.efetivo?.nome_guerra || "—"}</span>

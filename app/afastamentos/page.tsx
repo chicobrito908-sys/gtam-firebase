@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  Briefcase, 
-  Plus, 
-  Calendar, 
-  User, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Briefcase,
+  Plus,
+  Calendar,
+  User,
+  AlertCircle,
+  CheckCircle2,
   X,
   Activity,
   History,
-  Trash2
+  Trash2,
+  Pencil
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,6 +36,7 @@ interface EfetivoBasico {
   nome_guerra: string;
   matricula: string;
   posto_grad: string;
+  antiguidade: number;
 }
 
 export default function AfastamentosPage() {
@@ -42,11 +44,18 @@ export default function AfastamentosPage() {
   const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  
+
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    id?: string;
+    efetivo_id: string;
+    tipo: string;
+    data_inicio: string;
+    data_fim: string;
+    motivo: string;
+  }>({
     efetivo_id: "",
-    tipo: "SAUDE",
+    tipo: "LICENÇA SAÚDE",
     data_inicio: new Date().toISOString().split('T')[0],
     data_fim: "",
     motivo: "",
@@ -64,12 +73,21 @@ export default function AfastamentosPage() {
       // 2. Buscar Efetivo para o dropdown
       const { data: efData } = await supabase
         .from("efetivo")
-        .select("id, nome_guerra, matricula, posto_grad")
-        .eq("status", "ATIVO")
-        .order("nome_guerra", { ascending: true });
+        .select("id, nome_guerra, matricula, posto_grad, antiguidade")
+        .order("antiguidade", { ascending: true });
 
       setAfastamentos(afData || []);
-      setEfetivo(efData || []);
+      if (efData) {
+        const sortedEfData = (efData as unknown as EfetivoBasico[]).sort((a, b) => {
+          if ((a.antiguidade ?? 9999) !== (b.antiguidade ?? 9999)) {
+            return (a.antiguidade ?? 9999) - (b.antiguidade ?? 9999);
+          }
+          return (a.nome_guerra || "").localeCompare(b.nome_guerra || "");
+        });
+        setEfetivo(sortedEfData);
+      } else {
+        setEfetivo([]);
+      }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     } finally {
@@ -89,16 +107,29 @@ export default function AfastamentosPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from("afastamentos")
-        .insert([formData]);
+      if (formData.id) {
+        const { error } = await supabase
+          .from("afastamentos")
+          .update({
+            efetivo_id: formData.efetivo_id,
+            tipo: formData.tipo,
+            data_inicio: formData.data_inicio,
+            data_fim: formData.data_fim,
+            motivo: formData.motivo
+          })
+          .eq("id", formData.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("afastamentos")
+          .insert([formData]);
+        if (error) throw error;
+      }
 
-      if (error) throw error;
-      
       setShowModal(false);
       setFormData({
         efetivo_id: "",
-        tipo: "SAUDE",
+        tipo: "LICENÇA SAÚDE",
         data_inicio: new Date().toISOString().split('T')[0],
         data_fim: "",
         motivo: "",
@@ -108,6 +139,18 @@ export default function AfastamentosPage() {
       const errorMsg = error instanceof Error ? error.message : "desconhecido";
       alert("Erro ao salvar: " + errorMsg);
     }
+  };
+
+  const handleEdit = (af: Afastamento) => {
+    setFormData({
+      id: af.id,
+      efetivo_id: af.efetivo_id,
+      tipo: af.tipo,
+      data_inicio: af.data_inicio,
+      data_fim: af.data_fim,
+      motivo: af.motivo || "",
+    });
+    setShowModal(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -136,8 +179,17 @@ export default function AfastamentosPage() {
           </div>
         </div>
 
-        <button 
-          onClick={() => setShowModal(true)}
+        <button
+          onClick={() => {
+            setFormData({
+              efetivo_id: "",
+              tipo: "LICENÇA SAÚDE",
+              data_inicio: new Date().toISOString().split('T')[0],
+              data_fim: "",
+              motivo: "",
+            });
+            setShowModal(true);
+          }}
           className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-6 py-3 rounded-xl font-black transition-all shadow-lg shadow-rose-600/20 active:scale-95 uppercase tracking-wider text-xs"
         >
           <Plus size={20} />
@@ -170,7 +222,7 @@ export default function AfastamentosPage() {
             </thead>
             <tbody className="divide-y divide-white/[0.02]">
               {afastamentos.map((af, index) => (
-                <motion.tr 
+                <motion.tr
                   key={af.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -191,10 +243,10 @@ export default function AfastamentosPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`text-[9px] font-black px-3 py-1 rounded-full border uppercase tracking-widest ${
-                      af.tipo === 'SAUDE' ? 'bg-rose-500/10 text-rose-400 border-rose-500/10' : 
-                      'bg-amber-500/10 text-amber-500 border-amber-500/10'
-                    }`}>
+                    <span className={`text-[9px] font-black px-3 py-1 rounded-full border uppercase tracking-widest ${af.tipo === 'LICENÇA SAÚDE' || af.tipo === 'SAUDE' ? 'bg-rose-500/10 text-rose-400 border-rose-500/10' :
+                        af.tipo === 'LICENÇA PRÊMIO' ? 'bg-amber-500/10 text-amber-500 border-amber-500/10' :
+                          'bg-blue-500/10 text-blue-400 border-blue-500/10'
+                      }`}>
                       {af.tipo}
                     </span>
                   </td>
@@ -202,9 +254,9 @@ export default function AfastamentosPage() {
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5 text-xs font-bold">
                         <Calendar size={12} className="text-muted-foreground" />
-                        {new Date(af.data_inicio).toLocaleDateString()} 
-                        <span className="text-muted-foreground font-normal">➔</span> 
-                        {new Date(af.data_fim).toLocaleDateString()}
+                        {af.data_inicio.split('-').reverse().join('/')}
+                        <span className="text-muted-foreground font-normal">➔</span>
+                        {af.data_fim.split('-').reverse().join('/')}
                       </div>
                       <span className="text-[9px] text-emerald-500 font-black uppercase tracking-tighter">
                         {Math.ceil((new Date(af.data_fim).getTime() - new Date(af.data_inicio).getTime()) / (1000 * 3600 * 24)) + 1} Dias
@@ -217,13 +269,22 @@ export default function AfastamentosPage() {
                     </p>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button 
-                      onClick={() => handleDelete(af.id)}
-                      className="p-2 hover:bg-rose-500/10 rounded-lg text-muted-foreground hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
-                      title="Excluir Registro"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => handleEdit(af)}
+                        className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        title="Editar Registro"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(af.id)}
+                        className="p-2 hover:bg-rose-500/10 rounded-lg text-muted-foreground hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
+                        title="Excluir Registro"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </motion.tr>
               ))}
@@ -246,14 +307,14 @@ export default function AfastamentosPage() {
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowModal(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -262,7 +323,7 @@ export default function AfastamentosPage() {
               <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                 <h2 className="font-black uppercase tracking-widest text-sm flex items-center gap-2">
                   <CheckCircle2 size={18} className="text-rose-500" />
-                  Novo Registro
+                  {formData.id ? 'Editar Registro' : 'Novo Registro'}
                 </h2>
                 <button onClick={() => setShowModal(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
                   <X size={20} />
@@ -275,10 +336,10 @@ export default function AfastamentosPage() {
                   <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <User size={12} /> Integrante *
                   </label>
-                  <select 
+                  <select
                     required
                     value={formData.efetivo_id}
-                    onChange={(e) => setFormData({...formData, efetivo_id: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, efetivo_id: e.target.value })}
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-rose-500/30 transition-all outline-none"
                   >
                     <option value="" className="text-black">Selecionar...</option>
@@ -296,15 +357,15 @@ export default function AfastamentosPage() {
                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                       <Activity size={12} /> Tipo
                     </label>
-                    <select 
+                    <select
                       value={formData.tipo}
-                      onChange={(e) => setFormData({...formData, tipo: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
                       className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-rose-500/30 transition-all outline-none"
                     >
-                      <option value="SAUDE" className="text-black">SAÚDE</option>
-                      <option value="NUPRE" className="text-black">NUPRE</option>
-                      <option value="PATERNIDADE" className="text-black">PATERNIDADE</option>
-                      <option value="OUTRO" className="text-black">OUTRO</option>
+                      <option value="LICENÇA PRÊMIO" className="text-black">LICENÇA PRÊMIO</option>
+                      <option value="LICENÇA SAÚDE" className="text-black">LICENÇA SAÚDE</option>
+                      <option value="LICENÇA INTERESSE PARTICULAR" className="text-black">LICENÇA INTERESSE PARTICULAR</option>
+                      <option value="AMSEC" className="text-black">AMSEC</option>
                     </select>
                   </div>
 
@@ -313,11 +374,11 @@ export default function AfastamentosPage() {
                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                       <Calendar size={12} /> Início *
                     </label>
-                    <input 
+                    <input
                       type="date"
                       required
                       value={formData.data_inicio}
-                      onChange={(e) => setFormData({...formData, data_inicio: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })}
                       className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-rose-500/30 transition-all outline-none"
                     />
                   </div>
@@ -328,11 +389,11 @@ export default function AfastamentosPage() {
                   <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <Calendar size={12} /> Término (Inclusive) *
                   </label>
-                  <input 
+                  <input
                     type="date"
                     required
                     value={formData.data_fim}
-                    onChange={(e) => setFormData({...formData, data_fim: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })}
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-rose-500/30 transition-all outline-none"
                   />
                 </div>
@@ -342,20 +403,20 @@ export default function AfastamentosPage() {
                   <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <AlertCircle size={12} /> Motivo / Observações
                   </label>
-                  <textarea 
+                  <textarea
                     value={formData.motivo}
-                    onChange={(e) => setFormData({...formData, motivo: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, motivo: e.target.value })}
                     placeholder="Especifique o motivo do afastamento..."
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-rose-500/30 transition-all outline-none min-h-[100px] resize-none"
                   />
                 </div>
 
                 <div className="pt-4">
-                  <button 
+                  <button
                     type="submit"
                     className="w-full bg-rose-600 hover:bg-rose-500 text-white py-4 rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-lg shadow-rose-600/20 active:scale-[0.98] transition-all"
                   >
-                    Salvar Registro
+                    {formData.id ? 'Atualizar Registro' : 'Salvar Registro'}
                   </button>
                 </div>
               </form>

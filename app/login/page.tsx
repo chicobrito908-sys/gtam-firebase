@@ -34,8 +34,8 @@ export default function LoginPage() {
         },
       });
       if (error) throw error;
-    } catch (error: any) {
-      alert("Erro ao iniciar login: " + error.message);
+    } catch (error) {
+      alert("Erro ao iniciar login: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setLoading(false);
     }
   };

@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Trash2, Calendar } from "lucide-react";
+import { Trash2, Calendar } from "lucide-react";
 import Button from "@/components/ui/Button";
 
+interface Vacation {
+  id: string;
+  data_inicio: string;
+  data_fim: string;
+  ano_referencia?: number;
+}
+
 interface VacationManagerProps {
-  ferias: any[];
-  onAdd: (data: any) => void;
+  ferias: Vacation[];
+  onAdd: (data: { data_inicio: string; data_fim: string; ano_referencia: number }) => void;
   onRemove: (id: string) => void;
 }
 

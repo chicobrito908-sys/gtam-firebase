@@ -9,8 +9,10 @@ const CARGOS_COMANDO = [
   { id: "ARMARIA", label: "Responsável Armaria", color: "amber" },
 ];
 
+import { ScaleEntry } from "@/types/agent";
+
 interface Props {
-  selectedAgents: any[];
+  selectedAgents: ScaleEntry[];
   efetivo: Agent[];
   onRemove: (id: string) => void;
   onSelect: (equipe: string, funcao: string) => void;

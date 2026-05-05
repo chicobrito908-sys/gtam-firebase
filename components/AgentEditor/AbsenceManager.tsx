@@ -1,26 +1,37 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Trash2, Activity } from "lucide-react";
+import { Trash2, Activity } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 interface AbsenceManagerProps {
-  afastamentos: any[];
-  ferias: any[];
-  onAdd: (data: any) => void;
+  afastamentos: {
+    id: string;
+    tipo: string;
+    data_inicio: string;
+    data_fim?: string;
+    motivo?: string;
+  }[];
+  ferias: {
+    id: string;
+    data_inicio: string;
+    data_fim: string;
+    ano_referencia?: number;
+  }[];
+  onAdd: (data: { tipo: string; data_inicio: string; data_fim: string; motivo: string }) => void;
   onRemove: (id: string) => void;
   onRemoveVacation: (id: string) => void;
-  agent: any;
+  agent: {
+    tipo_escala?: string;
+    [key: string]: any;
+  } | null;
 }
 
 const ALL_TIPOS = [
   { id: "F.A",     label: "F.A (Folga Agendada)" },
-  { id: "FERIAS",  label: "FÉRIAS" },
   { id: "R.P",     label: "R.P (Redução de Plantão)", restricted: true },
   { id: "M.P",     label: "M.P (Meio Plantão)",       restricted: true },
   { id: "ATESTADO",label: "ATESTADO" },
-  { id: "L.P",     label: "L.P" },
-  { id: "AMSEC",   label: "AMSEC" },
   { id: "SANGUE",  label: "DOAÇÃO DE SANGUE" },
 ];
 

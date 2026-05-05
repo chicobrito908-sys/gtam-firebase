@@ -10,14 +10,16 @@ const MONTHS = [
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
 ];
 
+import { type DayScale } from "./ReportDetailedV2";
+
 interface ScaleCalendarProps {
   currentDate: Date;
   selectedDay: string;
   setSelectedDay: (date: string) => void;
   onDoubleClickHandler: (date: string) => void;
   changeMonth: (offset: number) => void;
-  escalas: any[];
-  ausencias: any[];
+  escalas: DayScale[];
+  ausencias: { data: string; tipo: string }[];
 }
 
 export default function ScaleCalendar({

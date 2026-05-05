@@ -5,11 +5,11 @@ import {
   Clock, 
   Plus, 
   Search, 
-  TrendingUp,
-  TrendingDown,
-  User,
-  History,
-  CheckCircle2
+  TrendingUp, 
+  TrendingDown, 
+  User, 
+  History, 
+  CheckCircle2 
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -41,7 +41,14 @@ export default function BancoHorasPage() {
   }
 
   const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    efetivo_id: string;
+    data: string;
+    tipo: 'CREDITO' | 'DEBITO';
+    horas: number;
+    motivo: string;
+    aprovado_por: string;
+  }>({
     efetivo_id: "",
     data: new Date().toISOString().split('T')[0],
     tipo: "CREDITO",
@@ -280,7 +287,7 @@ export default function BancoHorasPage() {
                   <select 
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold uppercase outline-none"
                     value={formData.tipo}
-                    onChange={(e) => setFormData({...formData, tipo: e.target.value as any})}
+                    onChange={(e) => setFormData({...formData, tipo: e.target.value as 'CREDITO' | 'DEBITO'})}
                   >
                     <option value="CREDITO">CRÉDITO (+)</option>
                     <option value="DEBITO">DÉBITO (-)</option>

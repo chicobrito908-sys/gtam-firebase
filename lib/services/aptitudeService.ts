@@ -1,9 +1,21 @@
-import { Agent } from "@/types/agent";
-
 export interface AptitudeResult {
   isFit: boolean;
   label: string | null;
   severity: "none" | "info" | "warning" | "error";
+}
+
+export interface Afastamento {
+  efetivo_id: string;
+  data_inicio: string;
+  data_fim?: string;
+  tipo: string;
+}
+
+export interface Ferias {
+  efetivo_id: string;
+  data_inicio: string;
+  data_fim: string;
+  status: string;
 }
 
 /**
@@ -28,12 +40,12 @@ export const isDateInInterval = (checkDate: string, start: string, end?: string)
 export const getAgentAptitude = (
   agentId: string,
   date: string,
-  afastamentos: any[],
-  ferias: any[]
+  afastamentos: Afastamento[],
+  ferias: Ferias[]
 ): AptitudeResult => {
   // 1. Verificar Férias
   const feriaAtiva = ferias.find(
-    f => f.efetivo_id === agentId && isDateInInterval(date, f.data_inicio, f.data_fim)
+    f => f.efetivo_id === agentId && f.status !== 'CANCELADO' && isDateInInterval(date, f.data_inicio, f.data_fim)
   );
   if (feriaAtiva) {
     return { isFit: false, label: "FÉRIAS", severity: "error" };
@@ -50,7 +62,7 @@ export const getAgentAptitude = (
   const tipo = (afAtivo.tipo || "").toUpperCase();
 
   // 🚨 Bloqueio total — impedido de escalar
-  const blockers = ["F.A", "FOLGA AGENDADA", "ATESTADO", "L.P", "LP", "AMSEC", "SANGUE", "DOACAO"];
+  const blockers = ["F.A", "FOLGA AGENDADA", "ATESTADO", "L.P", "LP", "AMSEC", "SANGUE", "DOACAO", "LICENÇA"];
   if (blockers.some(c => tipo.includes(c))) {
     return { isFit: false, label: tipo, severity: "error" };
   }

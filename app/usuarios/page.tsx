@@ -15,8 +15,17 @@ import {
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface Usuario {
+  id: string;
+  nome: string | null;
+  email: string;
+  status: string;
+  nivel: string;
+  created_at: string;
+}
+
 export default function UserManagementPage() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -29,7 +38,7 @@ export default function UserManagementPage() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setUsers(data || []);
+      setUsers((data as Usuario[]) || []);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     } finally {
@@ -50,8 +59,8 @@ export default function UserManagementPage() {
 
       if (error) throw error;
       fetchUsers();
-    } catch (error: any) {
-      alert("Erro ao atualizar status: " + error.message);
+    } catch (error) {
+      alert("Erro ao atualizar status: " + (error instanceof Error ? error.message : "Erro desconhecido"));
     }
   };
 

@@ -20,13 +20,7 @@ export default function Button({
 }: ButtonProps) {
   const baseStyles = "relative inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0b1016] disabled:opacity-50 disabled:cursor-not-allowed";
   
-  const variants = {
-    primary: "background-color: var(--primary) text-white hover:bg-[#8b5cf6] focus:ring-[#7c3aed]",
-    secondary: "bg-[#1f2937] text-white hover:bg-[#374151] focus:ring-[#4b5563]",
-    ghost: "bg-transparent text-gray-400 hover:bg-white/5 border border-white/10",
-    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    success: "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500"
-  };
+
 
   const sizes = {
     sm: "px-3 py-1.5 text-xs",

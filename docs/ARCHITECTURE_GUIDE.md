@@ -6,10 +6,11 @@ Este documento define as regras obrigatórias para o desenvolvimento do GTAM, ga
 
 ## 1. Estrutura do Código (Componentização Estrita)
 
-### 📏 Regra de Ouro: Máximo 100 Linhas
-- **Regra:** Nenhum arquivo de componente (`.tsx`) deve ultrapassar **100 linhas** de código.
-- **Por que?** Arquivos pequenos são mais fáceis de ler, testar e encontrar erros.
-- **Ação:** Se um componente crescer demais, divida-o em pedaços menores (sub-componentes) ou mova a lógica para Hooks e Serviços.
+### 📏 Regra de Ouro Híbrida: Limite de Linhas
+- **Regra para Páginas (app/):** Arquivos principais que juntam várias partes (`page.tsx`) não devem ultrapassar **350 linhas**.
+- **Regra para Componentes (components/):** Nenhum arquivo de componente isolado (botões, modais, pequenos painéis) deve ultrapassar **100 linhas**.
+- **Por que?** Permite velocidade ao desenvolver páginas completas, mas mantém os componentes individuais limpos e fáceis de dar manutenção e reaproveitar.
+- **Ação:** Se um componente simples crescer mais de 100 linhas, ou uma página ultrapassar 350 linhas, eles devem ser obrigatoriamente divididos em pedaços menores.
 
 ### 🧩 Organização de Arquivos
 - `components/ui/`: Componentes básicos e reutilizáveis (Botão, Card, Input).
