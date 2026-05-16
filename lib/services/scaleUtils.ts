@@ -4,8 +4,10 @@ export const getTurnoCount = (agents: Agent[], turno: string) => {
   return agents.filter(a => {
     if (a.status !== "ATIVO") return false;
     
-    // Normalização robusta (remove espaços internos)
-    const grupo = String(a.grupo_turno || "").replace(/\s+/g, '').toUpperCase();
+    // Normalização robusta:
+    // 1. Remove prefixo "TURNO" (banco tem "TURNO A II" e "A II" misturados)
+    // 2. Remove todos os espaços internos
+    const grupo = String(a.grupo_turno || "").toUpperCase().replace(/^TURNO\s*/i, '').replace(/\s+/g, '').trim();
     const escala = String(a.tipo_escala || "").replace(/\s+/g, '').toUpperCase();
 
     const is24h = escala === "24X72" || grupo === "B";

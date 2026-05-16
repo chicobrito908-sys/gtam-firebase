@@ -40,13 +40,16 @@ export default function AgentSelector({
       // Turno AII = Escala 2x2 Manhã
       // Turno BII = Escala 2x2 Tarde
       
-      // Normalização robusta (remove espaços internos)
-      const turno = String(a.grupo_turno || "").replace(/\s+/g, '').toUpperCase();
+      // Normalização robusta:
+      // 1. Remove prefixo "TURNO" (banco tem "TURNO A II" e "A II" misturados)
+      // 2. Remove todos os espaços internos
+      // 3. Converte para maiúsculo
+      const turnoRaw = String(a.grupo_turno || "").toUpperCase().replace(/^TURNO\s*/i, '').replace(/\s+/g, '').trim();
       const escala = String(a.tipo_escala || "").replace(/\s+/g, '').toUpperCase();
 
-      const is24h = escala === "24X72" || turno === "B";
-      const isAII = turno === "AII";
-      const isBII = turno === "BII";
+      const is24h = escala === "24X72" || turnoRaw === "B";
+      const isAII = turnoRaw === "AII";
+      const isBII = turnoRaw === "BII";
       
       if (currentScaleTurn === "MANHÃ") {
         return is24h || isAII;

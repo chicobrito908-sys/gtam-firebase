@@ -29,9 +29,10 @@ export function formatDateRange(start?: string, end?: string): string {
 
 export function normalizeTurno(turno?: string): "MANHA" | "TARDE" | "24x72" {
   const v = String(turno || "").toUpperCase().trim();
-  if (v.includes("MANH") || v.includes("TURNO I") || v === "A" || v.includes("A II")) return "MANHA";
-  if (v.includes("TARD") || v.includes("TURNO II") || v.includes("B II") || v === "B") return "TARDE";
-  if (v.includes("24") || v.includes("SERV") || v.includes("ALFA") || v.includes("BETA")) return "24x72";
+  // 24x72 primeiro (B sem II = 24x72 coringa)
+  if (v.includes("24") || v.includes("SERV") || v.includes("ALFA") || v.includes("BETA") || v === "B" || v === "TURNO B") return "24x72";
+  if (v.includes("MANH") || v.includes("A II") || v === "TURNO I") return "MANHA";
+  if (v.includes("TARD") || v.includes("B II") || v === "TURNO II") return "TARDE";
   return "TARDE";
 }
 
@@ -49,7 +50,8 @@ export function isActiveAgent(agent: Efetivo): boolean {
 
 export function normalizeScaleGroup(agent: Efetivo): "24x72" | "MANHA" | "TARDE" {
   const escala = String(agent.tipo_escala || "").toUpperCase().trim();
-  const grupo = String(agent.grupo_turno || "").toUpperCase().trim();
+  // Remove prefixo "TURNO" (banco tem "TURNO A II" e "A II" misturados)
+  const grupo = String(agent.grupo_turno || "").toUpperCase().replace(/^TURNO\s*/i, '').trim();
   // B e 24x72 são o mesmo grupo (coringa — aparece em Manhã e Tarde)
   if (escala.includes("24") || escala.includes("SERV") || grupo === "B") return "24x72";
   if (grupo.includes("A II") || grupo.includes("TURNO I") || grupo.includes("MANH")) return "MANHA";
