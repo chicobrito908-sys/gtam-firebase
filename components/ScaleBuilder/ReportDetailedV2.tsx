@@ -44,39 +44,28 @@ const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: { t
       <h5 className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] border-l-2 border-primary/40 pl-3">
         TURNO {turnoName}
       </h5>
-      <div className="space-y-6">
-        {subs.map(sub => {
-          const subLabels: Record<string, string> = {
-            BI: "Turno I (AII)",
-            BII: "Turno II (BII)",
-            TITULAR: "Escala 24h / Apoio"
-          };
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {subs.flatMap(sub => {
           const vtrs = vtrsMap[sub] || [];
-          if (vtrs.length === 0) return null;
-          hasAnyVtr = true;
-          return (
-            <div key={sub} className="space-y-3">
-              <h6 className="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest pl-2">• {subLabels[sub] || sub}</h6>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {vtrs.map((v: ScaleVtr) => (
-                  <VtrCard
-                    key={v.id}
-                    vtr={v as any}
-                    isReadOnly={true}
-                    agents={selectedAgents.filter((a: ScaleAgent) => a.equipe === v.id && a.funcao === sub)}
-                    getAgentById={getAgent}
-                    getAgentAptitude={() => ({ status: true, severity: "none", label: "APTO", conditions: [] })}
-                    onRename={() => {}}
-                    onToggleType={() => {}}
-                    onRemoveVtr={() => {}}
-                    onRemoveAgent={() => {}}
-                    onSelectAgent={() => {}}
-                    isSelecting={false}
-                  />
-                ))}
-              </div>
-            </div>
-          );
+          return vtrs.map((v: ScaleVtr) => {
+            hasAnyVtr = true;
+            return (
+              <VtrCard
+                key={`${sub}-${v.id}`}
+                vtr={v as any}
+                isReadOnly={true}
+                agents={selectedAgents.filter((a: ScaleAgent) => a.equipe === v.id && a.funcao === sub)}
+                getAgentById={getAgent}
+                getAgentAptitude={() => ({ status: true, severity: "none", label: "APTO", conditions: [] })}
+                onRename={() => {}}
+                onToggleType={() => {}}
+                onRemoveVtr={() => {}}
+                onRemoveAgent={() => {}}
+                onSelectAgent={() => {}}
+                isSelecting={false}
+              />
+            );
+          });
         })}
       </div>
       {!hasAnyVtr && <div className="text-xs text-white/20 pl-4 italic">Nenhuma viatura escalada para este turno.</div>}

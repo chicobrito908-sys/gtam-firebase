@@ -86,38 +86,30 @@ export default function AgentSelector({
           />
         </div>
 
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${showAll ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-             <span className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">
-               {showAll ? "MODO EMERGÊNCIA (TUDO)" : `FILTRADO: ${currentScaleTurn || "GERAL"}`}
-             </span>
-          </div>
-          
-          <button 
-            onClick={() => setShowAll(!showAll)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[9px] font-black uppercase tracking-widest ${
-              showAll 
-                ? "bg-rose-500/20 border-rose-500/40 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.1)]" 
-                : "bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10"
-            }`}
-          >
-            {showAll ? <Users size={12} /> : <AlertTriangle size={12} />}
-            {showAll ? "ATIVAR FILTRO" : "MOSTRAR TODOS"}
-          </button>
-        </div>
       </div>
 
-      <div className="max-h-[300px] overflow-y-auto space-y-1 custom-scrollbar pr-2">
-        {filtered.map((ag) => (
-          <AgentCard
-            key={ag.id} agent={ag} 
-            aptitude={getAptitude(ag.id)}
-            isScaled={selectedAgentIds.includes(ag.id) || alreadyInOtherTurnoIds.includes(ag.id)}
-            onSelect={onSelect}
-          />
-        ))}
-        {filtered.length === 0 && <div className="py-8 text-center opacity-20 italic text-[10px]">Nenhum resultado encontrado</div>}
+      <div className="flex items-center justify-between">
+        <h4 className="text-[10px] font-black text-white/50 uppercase tracking-widest">Agentes Disponíveis</h4>
+        <span className="text-[10px] text-white/30 italic">Ordenado por Antiguidade</span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+        {filtered.length === 0 ? (
+          <div className="h-32 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-xl text-white/20">
+            <Users size={24} className="mb-2 opacity-20" />
+            <span className="text-[10px] font-medium">Nenhum agente encontrado</span>
+          </div>
+        ) : (
+          filtered.map((agent) => (
+            <AgentCard
+              key={agent.id} 
+              agent={agent} 
+              aptitude={getAptitude(agent.id)}
+              isScaled={selectedAgentIds.includes(agent.id) || alreadyInOtherTurnoIds.includes(agent.id)}
+              onSelect={onSelect}
+            />
+          ))
+        )}
       </div>
 
       <div className="mt-4 pt-3 border-t border-white/5 flex justify-end">

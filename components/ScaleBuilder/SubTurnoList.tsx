@@ -48,37 +48,40 @@ export default function SubTurnoList({
     return true;
   });
 
+  // Pegamos todas as viaturas de todos os sub-turnos filtrados para exibir juntas
+  const allVtrs = filteredSubTurnos.flatMap(sub => 
+    (vtrsMap[sub.id] || []).map(v => ({ ...v, subId: sub.id }))
+  );
+
   return (
     <div className="space-y-10">
-      {filteredSubTurnos.map((sub) => (
-        <div key={sub.id} className="space-y-6">
-          <div className="flex items-center justify-between border-l-4 border-[#7c3aed] pl-4">
-            <h3 className="font-black uppercase tracking-[0.2em] text-[10px] text-[#7c3aed]">{sub.label}</h3>
-            {!isReadOnly && (
-              <Button variant="ghost" size="sm" onClick={() => onAddVtr(sub.id)}>
-                <UserPlus size={14} className="mr-2" /> Adicionar Viatura
-              </Button>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {(vtrsMap[sub.id] || []).map(v => (
-              <VtrCard
-                key={v.id} vtr={v}
-                isReadOnly={isReadOnly}
-                agents={selectedAgents.filter(a => a.equipe === v.id && a.funcao === sub.id)}
-                getAgentById={(id) => efetivo.find(a => a.id === id)}
-                getAgentAptitude={getAptitude}
-                onRename={(name) => onRenameVtr(sub.id, v.id, name)}
-                onToggleType={() => onToggleVtrType(sub.id, v.id)}
-                onRemoveVtr={() => onRemoveVtr(sub.id, v.id)}
-                onRemoveAgent={onRemoveAgent}
-                onSelectAgent={() => setSelectingFor({ equipe: v.id, funcao: sub.id })}
-                isSelecting={selectingFor?.equipe === v.id && selectingFor?.funcao === sub.id}
-              />
-            ))}
-          </div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between border-l-4 border-[#7c3aed] pl-4">
+          <h3 className="font-black uppercase tracking-[0.2em] text-[10px] text-[#7c3aed]">EQUIPES OPERACIONAIS</h3>
+          {!isReadOnly && (
+            <Button variant="ghost" size="sm" onClick={() => onAddVtr(turno === "MANHÃ" ? "BI" : (turno === "TARDE" ? "BII" : "TITULAR"))}>
+              <UserPlus size={14} className="mr-2" /> Adicionar Viatura
+            </Button>
+          )}
         </div>
-      ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {allVtrs.map(v => (
+            <VtrCard
+              key={`${v.subId}-${v.id}`} vtr={v}
+              isReadOnly={isReadOnly}
+              agents={selectedAgents.filter(a => a.equipe === v.id && a.funcao === v.subId)}
+              getAgentById={(id) => efetivo.find(a => a.id === id)}
+              getAgentAptitude={getAptitude}
+              onRename={(name) => onRenameVtr(v.subId, v.id, name)}
+              onToggleType={() => onToggleVtrType(v.subId, v.id)}
+              onRemoveVtr={() => onRemoveVtr(v.subId, v.id)}
+              onRemoveAgent={onRemoveAgent}
+              onSelectAgent={() => setSelectingFor({ equipe: v.id, funcao: v.subId })}
+              isSelecting={selectingFor?.equipe === v.id && selectingFor?.funcao === v.subId}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
