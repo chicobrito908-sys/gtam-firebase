@@ -77,7 +77,7 @@ export default function AgentSelector({
     });
 
   return (
-    <div className="absolute top-full left-0 right-0 z-50 mt-4 bg-[#1a1f26] border border-white/10 rounded-[24px] shadow-2xl p-4 animate-in fade-in zoom-in duration-200">
+    <div className="absolute top-full left-0 right-0 z-50 mt-4 bg-[#1a1f26] border border-white/10 rounded-[24px] shadow-2xl p-4 flex flex-col max-h-[60vh] animate-in fade-in zoom-in duration-200">
       {/* Cabeçalho com Filtros */}
       <div className="flex flex-col gap-3 mb-4">
         <div className="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl">
