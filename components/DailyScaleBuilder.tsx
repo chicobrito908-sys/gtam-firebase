@@ -45,18 +45,18 @@ export default function DailyScaleBuilder({ initialDate, onBack }: { initialDate
 
       {s.selectingFor && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" 
+          className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" 
           onClick={() => s.setSelectingFor(null)}
         >
           <div 
-            className="w-full max-w-md relative" 
+            className="w-full max-w-sm h-full bg-[#0d1117] border-l border-white/5 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 relative" 
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={() => s.setSelectingFor(null)} 
-              className="absolute -top-3 -right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/10 hover:bg-rose-500/80 rounded-full transition-all text-white"
+              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-500/80 rounded-full transition-all text-white"
             >
-              <X size={14} />
+              <X size={18} />
             </button>
             <AgentSelector 
               agents={s.efetivo} 

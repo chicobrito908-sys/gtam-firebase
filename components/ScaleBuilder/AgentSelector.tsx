@@ -77,18 +77,18 @@ export default function AgentSelector({
     });
 
   return (
-    <div className="absolute top-full left-0 right-0 z-50 mt-4 bg-[#1a1f26] border border-white/10 rounded-[24px] shadow-2xl p-4 flex flex-col max-h-[60vh] animate-in fade-in zoom-in duration-200">
+    <div className="flex-1 flex flex-col w-full h-full p-6 pt-16 overflow-hidden">
       {/* Cabeçalho com Filtros */}
-      <div className="flex flex-col gap-3 mb-4">
-        <div className="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl">
-          <Search size={14} className="text-[#7c3aed]" />
+      <div className="flex flex-col gap-4 mb-6">
+        <h3 className="text-sm font-black text-white uppercase tracking-widest">Selecionar Agente</h3>
+        <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus-within:border-[#7c3aed]/50 transition-colors">
+          <Search size={16} className="text-[#7c3aed]" />
           <input
             autoFocus value={filter} onChange={(e) => setFilter(e.target.value)}
             placeholder="PESQUISAR POLICIAL..."
-            className="bg-transparent border-none text-[10px] font-black text-white outline-none w-full placeholder:text-white/10 uppercase tracking-widest"
+            className="bg-transparent border-none text-xs font-black text-white outline-none w-full placeholder:text-white/20 uppercase tracking-widest"
           />
         </div>
-
       </div>
 
       <div className="flex items-center justify-between">
