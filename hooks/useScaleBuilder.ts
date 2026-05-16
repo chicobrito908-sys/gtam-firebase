@@ -47,8 +47,18 @@ export function useScaleBuilder(initialDate?: string) {
         setMissoes(sc.missoes || []);
         setVtrsMap(sc.vtrsMap || { BI: [], BII: [], TITULAR: [] });
       } else {
+        // Busca a última escala do mesmo turno para herdar as missões padrão
+        const { data: lastScale } = await supabase
+          .from("escalas")
+          .select("missoes")
+          .eq("turno", turno)
+          .lt("data", date)
+          .order("data", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
         setSelectedAgents([]);
-        setMissoes([]);
+        setMissoes(lastScale?.missoes || []);
         setVtrsMap({ BI: [], BII: [], TITULAR: [] });
       }
     } catch (err) {
