@@ -3,22 +3,28 @@ import { Agent } from "@/types/agent";
 export const getTurnoCount = (agents: Agent[], turno: string) => {
   return agents.filter(agent => {
     if (agent.status !== "ATIVO") return false;
-    const escala = String(agent.tipo_escala || "").toUpperCase().trim();
+    
+    // Normalização das siglas para comparação
     const grupo = String(agent.grupo_turno || "").toUpperCase().trim();
+    const escala = String(agent.tipo_escala || "").toUpperCase().trim();
 
-    const is24h = escala.includes("24") || escala.includes("SERV");
-    if (turno === "24H") return is24h;
+    // Regra: B é 24h (Coringa), AII é Manhã (2x2), BII é Tarde (2x2)
+    const is24h = escala === "24X72" || grupo === "B";
+    const isAII = grupo === "AII";
+    const isBII = grupo === "BII";
 
-    // Se é 2x2 (não 24h)
-    if (is24h) return false;
+    if (turno === "MANHÃ") {
+      return is24h || isAII;
+    }
     
-    // Grupo A = Turno I / Manhã, Grupo B = Turno II / Noite
-    const isManha = grupo.includes("A II") || grupo.includes("TURNO I") || grupo.includes("MANH") || grupo === "A";
-    const isNoite = grupo.includes("B II") || grupo.includes("TURNO II") || grupo.includes("TARD") || grupo.includes("NOI") || grupo === "B";
+    if (turno === "TARDE") {
+      return is24h || isBII;
+    }
 
-    if (turno === "MANHÃ") return isManha;
-    if (turno === "NOITE") return isNoite;
+    if (turno === "24H") {
+      return is24h;
+    }
     
-    return true; // fallback
+    return true;
   }).length;
 };

@@ -40,18 +40,21 @@ export default function AgentSelector({
       // Turno AII = Escala 2x2 Manhã
       // Turno BII = Escala 2x2 Tarde
       
-      // Normalização simples para garantir compatibilidade
-      const turno = (a.grupo_turno || "").toUpperCase();
-      const is24h = a.tipo_escala === "24x72" || turno === "B";
+      // Normalização robusta
+      const turno = String(a.grupo_turno || "").toUpperCase().trim();
+      const escala = String(a.tipo_escala || "").toUpperCase().trim();
+
+      const is24h = escala === "24X72" || turno === "B";
+      const isAII = turno === "AII";
+      const isBII = turno === "BII";
       
       if (currentScaleTurn === "MANHÃ") {
-        return is24h || turno === "AII";
+        return is24h || isAII;
       }
       if (currentScaleTurn === "TARDE") {
-        return is24h || turno === "BII";
+        return is24h || isBII;
       }
 
-      // Se for turno de 24h, mostra apenas o pessoal de 24h (Turno B)
       if (currentScaleTurn === "24H") return is24h;
 
       return true;
