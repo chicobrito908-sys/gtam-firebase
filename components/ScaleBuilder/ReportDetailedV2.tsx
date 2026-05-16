@@ -46,12 +46,17 @@ const TurnoSectionGroup = ({ turnoName, vtrsMap, selectedAgents, getAgent }: { t
       </h5>
       <div className="space-y-6">
         {subs.map(sub => {
+          const subLabels: Record<string, string> = {
+            BI: "Turno I (AII)",
+            BII: "Turno II (BII)",
+            TITULAR: "Escala 24h / Apoio"
+          };
           const vtrs = vtrsMap[sub] || [];
           if (vtrs.length === 0) return null;
           hasAnyVtr = true;
           return (
             <div key={sub} className="space-y-3">
-              <h6 className="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest pl-2">• {sub}</h6>
+              <h6 className="text-[9px] font-black text-[#7c3aed] uppercase tracking-widest pl-2">• {subLabels[sub] || sub}</h6>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {vtrs.map((v: ScaleVtr) => (
                   <VtrCard

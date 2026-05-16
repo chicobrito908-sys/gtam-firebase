@@ -36,9 +36,15 @@ export default function SubTurnoList({
   onRemoveAgent, setSelectingFor, selectingFor, isReadOnly
 }: Props) {
   const filteredSubTurnos = SUB_TURNOS.filter(sub => {
-    if (turno === "MANHÃ") return sub.id === "BI";
-    if (turno === "TARDE") return sub.id === "BII";
+    // Na Manhã, mostramos o Turno I (AII) e as equipes de 24h
+    if (turno === "MANHÃ") return sub.id === "BI" || sub.id === "TITULAR";
+    
+    // Na Tarde, mostramos o Turno II (BII) e as equipes de 24h
+    if (turno === "TARDE") return sub.id === "BII" || sub.id === "TITULAR";
+    
+    // Na escala de 24h, mostramos apenas as equipes de 24h
     if (turno === "24H") return sub.id === "TITULAR";
+    
     return true;
   });
 

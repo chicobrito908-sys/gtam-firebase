@@ -87,7 +87,7 @@ export const generateWhatsAppText = (
     (a) => a.equipe === "GUARNIÇÃO" && a.funcao === "TITULAR"
   );
   if (guarnicao24h.length > 0) {
-    text += `🏰 *EQUIPE 24H:*\n`;
+    text += `🏰 *EQUIPE:*\n`;
     guarnicao24h.forEach((m) => {
       const ag = getAgentById(m.agentId);
       if (ag) text += `• ${ag.posto_grad} ${ag.nome_guerra}\n`;
@@ -127,7 +127,7 @@ export const generateWhatsAppText = (
       !["SUPERVISÃO", "ARMARIA"].includes(a.equipe)
   );
   if (apoio.length > 0) {
-    text += `⚡ *EQUIPES DE APOIO (24H):*\n`;
+    text += `⚡ *EQUIPES DE APOIO:*\n`;
     const uniqueApoioIds = Array.from(new Set(apoio.map((a) => a.equipe)));
     uniqueApoioIds.forEach((vtrId) => {
       const vtrInfo = vtrsMap.TITULAR?.find((v) => v.id === vtrId);
