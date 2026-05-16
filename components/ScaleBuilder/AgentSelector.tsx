@@ -40,9 +40,9 @@ export default function AgentSelector({
       // Turno AII = Escala 2x2 Manhã
       // Turno BII = Escala 2x2 Tarde
       
-      // Normalização robusta
-      const turno = String(a.grupo_turno || "").toUpperCase().trim();
-      const escala = String(a.tipo_escala || "").toUpperCase().trim();
+      // Normalização robusta (remove espaços internos)
+      const turno = String(a.grupo_turno || "").replace(/\s+/g, '').toUpperCase();
+      const escala = String(a.tipo_escala || "").replace(/\s+/g, '').toUpperCase();
 
       const is24h = escala === "24X72" || turno === "B";
       const isAII = turno === "AII";
