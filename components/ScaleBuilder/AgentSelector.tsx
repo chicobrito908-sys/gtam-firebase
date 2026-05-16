@@ -35,20 +35,23 @@ export default function AgentSelector({
       // 2. Filtro de Emergência (Botão Show All)
       if (showAll) return true;
 
-      // 3. Lógica de Turno A / B / 24h
-      const is24h = a.tipo_escala === "24x72";
+      // 3. Lógica de Turno AII / BII / B (24h)
+      // Turno B = 24x72 (Coringa)
+      // Turno AII = Escala 2x2 Manhã
+      // Turno BII = Escala 2x2 Tarde
       
       // Normalização simples para garantir compatibilidade
       const turno = (a.grupo_turno || "").toUpperCase();
+      const is24h = a.tipo_escala === "24x72" || turno === "B";
       
       if (currentScaleTurn === "MANHÃ") {
-        return is24h || turno === "A" || turno === "TURNO A";
+        return is24h || turno === "AII";
       }
       if (currentScaleTurn === "TARDE") {
-        return is24h || turno === "B" || turno === "TURNO B";
+        return is24h || turno === "BII";
       }
 
-      // Se for turno de 24h ou outro, mostra 24h por padrão
+      // Se for turno de 24h, mostra apenas o pessoal de 24h (Turno B)
       if (currentScaleTurn === "24H") return is24h;
 
       return true;
