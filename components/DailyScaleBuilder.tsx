@@ -60,6 +60,7 @@ export default function DailyScaleBuilder({ initialDate, onBack }: { initialDate
             </button>
             <AgentSelector 
               agents={s.efetivo} 
+              currentScaleTurn={s.turno}
               getAptitude={s.getAptitude} 
               onSelect={s.handleSelectAgent} 
               onClose={() => s.setSelectingFor(null)} 

@@ -12,7 +12,10 @@ import {
   Activity,
   History,
   Trash2,
-  Pencil
+  Pencil,
+  List,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -44,6 +47,8 @@ export default function AfastamentosPage() {
   const [efetivo, setEfetivo] = useState<EfetivoBasico[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -165,6 +170,52 @@ export default function AfastamentosPage() {
     }
   };
 
+  // Calendar Helpers
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const daysInMonth = getDaysInMonth(currentMonth);
+  const firstDay = getFirstDayOfMonth(currentMonth);
+  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const blanksArray = Array.from({ length: firstDay }, (_, i) => i);
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const getAfastamentosForDay = (day: number) => {
+    const dataString = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return afastamentos.filter(af => {
+      return dataString >= af.data_inicio && dataString <= af.data_fim;
+    });
+  };
+
+  const handleDayClick = (day: number) => {
+    const dataString = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    setFormData({
+      efetivo_id: "",
+      tipo: "LICENÇA SAÚDE",
+      data_inicio: dataString,
+      data_fim: dataString,
+      motivo: "",
+    });
+    setShowModal(true);
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pl-4 py-8 max-w-[1400px]">
       {/* Header */}
@@ -179,26 +230,43 @@ export default function AfastamentosPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            setFormData({
-              efetivo_id: "",
-              tipo: "LICENÇA SAÚDE",
-              data_inicio: new Date().toISOString().split('T')[0],
-              data_fim: "",
-              motivo: "",
-            });
-            setShowModal(true);
-          }}
-          className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-6 py-3 rounded-xl font-black transition-all shadow-lg shadow-rose-600/20 active:scale-95 uppercase tracking-wider text-xs"
-        >
-          <Plus size={20} />
-          <span>Registrar Afastamento</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex bg-black/40 rounded-xl p-1 border border-white/5">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-widest transition-all ${viewMode === 'list' ? 'bg-white/10 text-white shadow-sm' : 'text-muted-foreground hover:text-white hover:bg-white/5'}`}
+            >
+              <List size={16} /> Lista
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-widest transition-all ${viewMode === 'calendar' ? 'bg-white/10 text-white shadow-sm' : 'text-muted-foreground hover:text-white hover:bg-white/5'}`}
+            >
+              <Calendar size={16} /> Calendário
+            </button>
+          </div>
+
+          <button
+            onClick={() => {
+              setFormData({
+                efetivo_id: "",
+                tipo: "LICENÇA SAÚDE",
+                data_inicio: new Date().toISOString().split('T')[0],
+                data_fim: "",
+                motivo: "",
+              });
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-6 py-3 rounded-xl font-black transition-all shadow-lg shadow-rose-600/20 active:scale-95 uppercase tracking-wider text-xs"
+          >
+            <Plus size={20} />
+            <span className="hidden md:inline">Registrar Afastamento</span>
+          </button>
+        </div>
       </div>
 
-      {/* Listagem */}
-      <div className="bg-card border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+      {viewMode === 'list' ? (
+        <div className="bg-card border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Activity size={18} />
@@ -302,6 +370,85 @@ export default function AfastamentosPage() {
           </table>
         </div>
       </div>
+      ) : (
+        <div className="bg-card border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button onClick={prevMonth} className="p-2 hover:bg-white/5 rounded-xl transition-all">
+                <ChevronLeft size={20} className="text-muted-foreground" />
+              </button>
+              <h3 className="font-black uppercase tracking-widest text-lg min-w-[200px] text-center">
+                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              </h3>
+              <button onClick={nextMonth} className="p-2 hover:bg-white/5 rounded-xl transition-all">
+                <ChevronRight size={20} className="text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+
+          <div className="p-4 overflow-x-auto">
+            <div className="min-w-[800px]">
+              <div className="grid grid-cols-7 mb-2">
+                {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(day => (
+                  <div key={day} className="text-center py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-2">
+                {blanksArray.map(blank => (
+                  <div key={`blank-${blank}`} className="min-h-[120px] rounded-xl border border-transparent bg-white/[0.01]"></div>
+                ))}
+                
+                {daysArray.map(day => {
+                  const dayAfastamentos = getAfastamentosForDay(day);
+                  const isToday = new Date().getDate() === day && new Date().getMonth() === currentMonth.getMonth() && new Date().getFullYear() === currentMonth.getFullYear();
+
+                  return (
+                    <div 
+                      key={day} 
+                      onClick={() => handleDayClick(day)}
+                      className={`min-h-[120px] p-2 rounded-xl border transition-all cursor-pointer hover:bg-white/[0.02] ${isToday ? 'border-rose-500/30 bg-rose-500/5' : 'border-white/5 bg-black/20'}`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className={`text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isToday ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-muted-foreground'}`}>
+                          {day}
+                        </span>
+                        {dayAfastamentos.length > 0 && (
+                          <span className="text-[9px] font-black bg-white/10 text-white px-1.5 py-0.5 rounded-md">
+                            {dayAfastamentos.length}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-1.5 max-h-[80px] overflow-y-auto custom-scrollbar pr-1">
+                        {dayAfastamentos.map((af, i) => (
+                          <div 
+                            key={i} 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(af);
+                            }}
+                            className={`text-[9px] font-black px-1.5 py-1 rounded truncate border uppercase tracking-tighter hover:opacity-80 transition-opacity ${
+                              af.tipo === 'LICENÇA SAÚDE' || af.tipo === 'SAUDE' ? 'bg-rose-500/10 text-rose-400 border-rose-500/10' :
+                              af.tipo === 'LICENÇA PRÊMIO' ? 'bg-amber-500/10 text-amber-500 border-amber-500/10' :
+                              'bg-blue-500/10 text-blue-400 border-blue-500/10'
+                            }`}
+                            title={`${af.efetivo?.nome_guerra} - ${af.tipo}`}
+                          >
+                            {af.efetivo?.nome_guerra}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Cadastro */}
       <AnimatePresence>
