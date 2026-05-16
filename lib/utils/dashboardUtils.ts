@@ -50,9 +50,10 @@ export function isActiveAgent(agent: Efetivo): boolean {
 export function normalizeScaleGroup(agent: Efetivo): "24x72" | "MANHA" | "TARDE" {
   const escala = String(agent.tipo_escala || "").toUpperCase().trim();
   const grupo = String(agent.grupo_turno || "").toUpperCase().trim();
-  if (escala.includes("24") || escala.includes("SERV")) return "24x72";
-  if (grupo.includes("A II") || grupo.includes("TURNO I") || grupo.includes("MANH") || grupo === "A") return "MANHA";
-  if (grupo.includes("B II") || grupo.includes("TURNO II") || grupo.includes("TARD") || grupo === "B") return "TARDE";
+  // B e 24x72 são o mesmo grupo (coringa — aparece em Manhã e Tarde)
+  if (escala.includes("24") || escala.includes("SERV") || grupo === "B") return "24x72";
+  if (grupo.includes("A II") || grupo.includes("TURNO I") || grupo.includes("MANH")) return "MANHA";
+  if (grupo.includes("B II") || grupo.includes("TURNO II") || grupo.includes("TARD")) return "TARDE";
   return "TARDE";
 }
 

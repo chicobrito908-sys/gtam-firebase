@@ -13,7 +13,7 @@ export function useAgentEditor(agent: any, isOpen: boolean, onSuccess: () => voi
     nome_guerra: "",
     posto_grad: "Guarda",
     status: "ATIVO",
-    grupo_turno: "A",
+    grupo_turno: "B",
     tipo_escala: "24x72"
   });
 

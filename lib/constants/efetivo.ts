@@ -2,7 +2,7 @@
 // Importe daqui em todos os formulários e componentes
 
 export const POSTOS_GRAD = ["GM", "Guarda", "Subinspetor", "Inspetor"];
-export const TURNOS = ["A", "B", "A II", "B II"];
+export const TURNOS = ["B", "A II", "B II"];
 export const ESCALAS = ["24x72", "2x2", "Expediente"];
 export const STATUS_OPTIONS = ["ATIVO", "FERIAS", "AFASTADO", "LICENÇA"];
 
